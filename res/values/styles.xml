@@ -17,4 +17,9 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="myDialogAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/scale_dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/scale_dialog_out</item>
+    </style>
+
 </resources>

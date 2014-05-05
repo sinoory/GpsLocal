@@ -93,6 +93,7 @@ public class IGridMenuActivity extends Activity {
         //lp.y = -100 ;  
         window.setAttributes(lp);  		
         window.setGravity(Gravity.BOTTOM);  //此处可以设置dialog显示的位置
+        window.setWindowAnimations(0x7f070002); 
         
 		menuDialog.setView(menuView);
 		menuDialog.setOnKeyListener(new OnKeyListener() {
