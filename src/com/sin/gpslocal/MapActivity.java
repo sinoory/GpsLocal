@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.mapapi.BMapManager;  
 import com.baidu.mapapi.map.MKMapViewListener;  
@@ -21,9 +22,11 @@ import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapPoi;  
 import com.baidu.mapapi.map.MapView;  
 import com.baidu.platform.comapi.basestruct.GeoPoint;
+import com.sin.pub.IGridMenuActivity;
 
 
-public class MapActivity extends Activity {
+
+public class MapActivity extends IGridMenuActivity {
 	private static final String TAG="MapActivity";
 
 	public static final String EXT_LONGGITUDE="longitude";
@@ -35,10 +38,45 @@ public class MapActivity extends Activity {
 	TextView mtv=null;
 	MapController mMapController=null;
 
+
+	void setupGridMenu(){
+		setResouce(R.layout.gridview_menu,R.id.gridview,R.layout.item_menu,R.id.item_image,R.id.item_text);
+		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_nightmode,"调试信息",new IMenuClickLis(){
+
+			@Override
+			public void onMenuClick() {
+				// TODO Auto-generated method stub
+				mtv.setVisibility(mtv.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+			}}));
+		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_refresh,"设置位置",new IMenuClickLis(){
+
+			@Override
+			public void onMenuClick() {
+				// TODO Auto-generated method stub
+				Button bt=((Button) MapActivity.this.findViewById(R.id.button1));
+				bt.setVisibility(bt.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+				EditText et =((EditText)findViewById(R.id.editText1));
+				et.setVisibility(bt.getVisibility());
+				
+			}}));
+		
+		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_search,"设置GPS",new IMenuClickLis(){
+			@Override
+			public void onMenuClick() {
+				//Toast.makeText(MapActivity.this, "设置GPS菜单被点击了", Toast.LENGTH_LONG).show();
+			}}));
+		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_quit,"退出",new IMenuClickLis(){
+
+			@Override
+			public void onMenuClick() {
+				// TODO Auto-generated method stub
+				MapActivity.this.finish();
+			}}));
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	
+    	setupGridMenu();
         super.onCreate(savedInstanceState);
         mBMapMan=new BMapManager(getApplication());  
         mBMapMan.init(null);
@@ -57,17 +95,7 @@ public class MapActivity extends Activity {
         float latitude=i.getFloatExtra(EXT_LATITUDE, -1.0f);//116.404f;//121.48f;//
         if(longitude != -1.0f){
         	setlocal(longitude,latitude);
-        	/*
-        	MapController mMapController=mMapView.getController();  
-        	// 得到mMapView的控制权,可以用它控制和驱动平移和缩放
-        	int x=(int)(longitude* 1E6);
-        	int y=(int)(latitude* 1E6);
-        	Log.d(TAG,"updateView GeoPoint x="+x+" y="+y+" lt="+longitude+" at="+latitude);
-        	GeoPoint point =new GeoPoint(x,y);  
-        	//用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)  
-        	mMapController.setCenter(point);//设置地图中心点  
-        	mMapController.setZoom(12);//设置地图zoom级别
-        	*/
+        	
         }else{
         	locatePosition();
         }

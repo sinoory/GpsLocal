@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
+
 import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.SimpleAdapter;
@@ -54,7 +58,7 @@ public class IGridMenuActivity extends Activity {
 		mIdItemItext=IdItemItext;
 	}
 	
-	ArrayList<GridMenuItem> mArrGridMenuItem = new ArrayList<GridMenuItem>();
+	public ArrayList<GridMenuItem> mArrGridMenuItem = new ArrayList<GridMenuItem>();
 	HashMap<Integer,GridMenuItem> mMapGridMenuItem= new HashMap<Integer,GridMenuItem>();
 
 	/*
@@ -80,6 +84,16 @@ public class IGridMenuActivity extends Activity {
 		menuView = View.inflate(this,mLayoutGridviewMenu, null);
 		// 创建AlertDialog
 		menuDialog = new AlertDialog.Builder(this).create();
+		Window window = menuDialog.getWindow();
+		
+		window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND) ;// 显示对话框时，后面的Activity不变暗，可选操作。
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();  
+        lp.alpha = 1.0f ;// 这是指定对话框的透明度，[0,1] float类型，所有要加f  
+        //lp.x = -100 5  
+        //lp.y = -100 ;  
+        window.setAttributes(lp);  		
+        window.setGravity(Gravity.BOTTOM);  //此处可以设置dialog显示的位置
+        
 		menuDialog.setView(menuView);
 		menuDialog.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(DialogInterface dialog, int keyCode,
