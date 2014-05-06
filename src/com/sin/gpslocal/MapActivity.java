@@ -11,6 +11,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,6 +25,7 @@ import com.baidu.mapapi.map.MKMapViewListener;
 import com.baidu.mapapi.map.MapController;  
 import com.baidu.mapapi.map.MapPoi;  
 import com.baidu.mapapi.map.MapView;  
+import com.baidu.mapapi.utils.CoordinateConvert;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.sin.pub.IGridMenuActivity;
 
@@ -39,6 +44,29 @@ public class MapActivity extends IGridMenuActivity {
 	MapController mMapController=null;
 
 
+    public void animateView(View v) {
+        Log.d(TAG,"btnAnimListener v="+v);
+        
+        AnimationSet animSet = new AnimationSet(true);
+        
+        RotateAnimation ranim = new RotateAnimation(0f, 180f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f); // , 200, 200);
+        
+        ranim.setDuration(1000*3);
+        
+        TranslateAnimation tanim=new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, -1.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+        
+        tanim.setDuration(600);
+        
+        //animSet.addAnimation(ranim);
+        animSet.addAnimation(tanim);
+        
+        v.setAnimation(animSet);
+    }
+	
 	void setupGridMenu(){
 		setResouce(R.layout.gridview_menu,R.id.gridview,R.layout.item_menu,R.id.item_image,R.id.item_text);
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_nightmode,"调试信息",new IMenuClickLis(){
@@ -46,7 +74,7 @@ public class MapActivity extends IGridMenuActivity {
 			@Override
 			public void onMenuClick() {
 				// TODO Auto-generated method stub
-				mtv.setVisibility(mtv.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+				mtv.setVisibility(mtv.getVisibility()==View.VISIBLE?View.INVISIBLE:View.VISIBLE);
 			}}));
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_refresh,"设置位置",new IMenuClickLis(){
 
@@ -54,9 +82,14 @@ public class MapActivity extends IGridMenuActivity {
 			public void onMenuClick() {
 				// TODO Auto-generated method stub
 				Button bt=((Button) MapActivity.this.findViewById(R.id.button1));
-				bt.setVisibility(bt.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+				bt.setVisibility(bt.getVisibility()==View.VISIBLE?View.INVISIBLE:View.VISIBLE);
 				EditText et =((EditText)findViewById(R.id.editText1));
 				et.setVisibility(bt.getVisibility());
+				if(bt.getVisibility()==View.VISIBLE){
+					animateView(et);
+					animateView(bt);
+				}
+				
 				
 			}}));
 		
@@ -70,6 +103,9 @@ public class MapActivity extends IGridMenuActivity {
 			@Override
 			public void onMenuClick() {
 				// TODO Auto-generated method stub
+				if(mLastListener!=null){
+					locationManager.removeUpdates(mLastListener);
+				}
 				MapActivity.this.finish();
 			}}));
 	}
@@ -192,9 +228,11 @@ public class MapActivity extends IGridMenuActivity {
         	int x=(int)(latitude* 1E6);
         	Log.d(TAG,"updateView GeoPoint x="+x+" y="+y+" lt="+longitude+" at="+latitude);
         	GeoPoint point =new GeoPoint(x,y);
+        	GeoPoint p2 = CoordinateConvert.fromWgs84ToBaidu(point);
+        	//GeoPoint p2 = CoordinateConvert.bundleDecode();
         	dbgs=dbgs+"updateView  x="+x+" y="+y+"\n lt="+longitude+" at="+latitude;
         	//用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)  
-        	mMapController.setCenter(point);//设置地图中心点  
+        	mMapController.setCenter(p2);//设置地图中心点  
         				
 		}
 		mtv.setText(dbgs);

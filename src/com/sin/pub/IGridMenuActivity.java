@@ -88,7 +88,7 @@ public class IGridMenuActivity extends Activity {
 		
 		window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND) ;// 显示对话框时，后面的Activity不变暗，可选操作。
 		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();  
-        lp.alpha = 1.0f ;// 这是指定对话框的透明度，[0,1] float类型，所有要加f  
+        lp.alpha = 0.6f ;// 这是指定对话框的透明度，[0,1] float类型，所有要加f  
         //lp.x = -100 5  
         //lp.y = -100 ;  
         window.setAttributes(lp);  		
