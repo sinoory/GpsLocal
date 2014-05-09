@@ -1,6 +1,12 @@
 package com.sin.gpslocal;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.java_websocket.drafts.Draft_10;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,6 +34,7 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.utils.CoordinateConvert;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.sin.pub.IGridMenuActivity;
+import com.sin.pub.IWebSocket;
 
 
 
@@ -43,6 +50,7 @@ public class MapActivity extends IGridMenuActivity {
 	TextView mtv=null;
 	MapController mMapController=null;
 
+	IWebSocket ws=null;
 
     public void animateView(View v) {
         Log.d(TAG,"btnAnimListener v="+v);
@@ -75,6 +83,9 @@ public class MapActivity extends IGridMenuActivity {
 			public void onMenuClick() {
 				// TODO Auto-generated method stub
 				mtv.setVisibility(mtv.getVisibility()==View.VISIBLE?View.INVISIBLE:View.VISIBLE);
+				if(mtv.getVisibility()==View.VISIBLE){
+					animateView(mtv);
+				}
 			}}));
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_refresh,"设置位置",new IMenuClickLis(){
 
@@ -93,10 +104,26 @@ public class MapActivity extends IGridMenuActivity {
 				
 			}}));
 		
-		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_search,"设置GPS",new IMenuClickLis(){
+		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_search,"websocket",new IMenuClickLis(){
 			@Override
 			public void onMenuClick() {
 				//Toast.makeText(MapActivity.this, "设置GPS菜单被点击了", Toast.LENGTH_LONG).show();
+
+		        try {
+		        	Map<String,String> httpHeaders = new HashMap<String,String>();
+		        	httpHeaders.put("Origin", "http://192.168.5.103:9090");//go revel need this to work well for websocket
+					ws = new IWebSocket(new URI( "ws://192.168.5.103:9090/app/feed?user=android" ), httpHeaders,60);
+
+					//ws = new IWebSocket(new URI( "ws://192.168.5.103:9090/app/feed?user=android" ));
+					Log.d(TAG,"IWebSocket start connect");
+					ws.connect();
+					Log.d(TAG,"IWebSocket finish connect");
+				} catch (URISyntaxException e) {
+					Log.d(TAG,"IWebSocket exception run");
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}}));
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_quit,"退出",new IMenuClickLis(){
 
@@ -154,7 +181,7 @@ public class MapActivity extends IGridMenuActivity {
         	}
         });
 
-        
+
     }
     
     
