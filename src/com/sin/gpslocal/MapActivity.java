@@ -132,7 +132,7 @@ public class MapActivity extends IGridMenuActivity  {
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_refresh,"上报",new IMenuClickLis(){
 
 			@Override
-			public void onMenuClick() {
+			public void onMenuClick() { 
 				// TODO Auto-generated method stub
 				ws.report("andsin");
 			}}));

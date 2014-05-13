@@ -2,14 +2,18 @@
 package com.sin.baidu;
 
 //import android.R;
+import com.sin.gpslocal.MenuDlg;
 import com.sin.gpslocal.R;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +37,8 @@ import com.baidu.mapapi.map.MyLocationOverlay.LocationMode;
 import com.baidu.mapapi.map.PopupClickListener;
 import com.baidu.mapapi.map.PopupOverlay;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
+
+
 //import com.sin.gpslocal.R;
 /**
  * 此demo用来展示如何结合定位SDK实现定位，并使用MyLocationOverlay绘制定位位置
@@ -48,7 +54,7 @@ public class LocationOverlayDemo extends Activity {
 	}
 	
 	private E_BUTTON_TYPE mCurBtnType;
-
+	private MenuDlg mMenu=null;
 	// 定位相关
 	LocationClient mLocClient;
 	LocationData locData = null;
@@ -152,6 +158,7 @@ public class LocationOverlayDemo extends Activity {
         option.setOpenGps(true);//打开gps
         option.setCoorType("bd09ll");     //设置坐标类型
         option.setScanSpan(2000);
+        option.disableCache(false);//cache the map data
         /*
          * option.setPoiNumber(5);     //最多返回POI个数  
 option.setPoiDistance(1000); //poi查询距离  
@@ -170,7 +177,25 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
 		//修改定位数据后刷新图层生效
 		mMapView.refresh();
 		
+		
+		mMenu=new MenuDlg();
+		mMenu.setupGridMenu();
+		mMenu.onCreateInit(this);
+		
     }
+    
+
+	
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    	 if(keyCode == KeyEvent.KEYCODE_MENU) {
+    		 mMenu.openMenu();
+    		 return true;
+    	 }
+    	return super.onKeyUp(keyCode, event);
+    }
+    
     /**
      * 手动触发一次定位请求
      */
