@@ -39,6 +39,7 @@ import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapView;  
 import com.baidu.mapapi.utils.CoordinateConvert;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
+import com.sin.baidu.LocationOverlayDemo;
 import com.sin.pub.IGridMenuActivity;
 import com.sin.pub.IWebSocket;
 import com.sin.pub.IWebSocket.WSMsgListener;
@@ -134,27 +135,20 @@ public class MapActivity extends IGridMenuActivity  {
 			public void onMenuClick() {
 				// TODO Auto-generated method stub
 				ws.report("andsin");
-				//ws.report(et.getText().toString());
-				/*//
-            	String[] pos=((EditText)findViewById(R.id.editText1)).getText().toString().split(",");
-            	double longitude=Double.parseDouble(pos[0]);
-            	double latitude=Double.parseDouble(pos[1]);
-        		setlocal(longitude,latitude);
-				 */
 			}}));
+		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_refresh,"启动百度",new IMenuClickLis(){
+
+			@Override
+			public void onMenuClick() {
+		        Intent intent = new Intent();
+		        intent.setClass(MapActivity.this, LocationOverlayDemo.class);
+				MapActivity.this.startActivity(intent);
+			}}));
+
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_refresh,"接受位置",new IMenuClickLis(){
 
 			@Override
 			public void onMenuClick() {
-				// TODO Auto-generated method stub
-				ws.report("andsin");
-				//ws.report(et.getText().toString());
-				/*//
-            	String[] pos=((EditText)findViewById(R.id.editText1)).getText().toString().split(",");
-            	double longitude=Double.parseDouble(pos[0]);
-            	double latitude=Double.parseDouble(pos[1]);
-        		setlocal(longitude,latitude);
-				 */
 			}}));
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_refresh,"共享位置",new IMenuClickLis(){
 
