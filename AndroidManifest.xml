@@ -64,7 +64,7 @@
             android:value="8CpF2X2d3LAcxKQZgEXpIqTG" />
 
         <activity
-            android:name="com.sin.gpslocal.MapActivity"
+            android:name="com.sin.baidu.LocationOverlayDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="sensor" >
@@ -74,11 +74,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.sin.baidu.LocationOverlayDemo"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="sensor" >
-        </activity>
+<!--         <activity -->
+<!--             android:name="com.sin.baidu.LocationOverlayDemo" -->
+<!--             android:configChanges="orientation|keyboardHidden" -->
+<!--             android:screenOrientation="sensor" > -->
+<!--         </activity> -->
 
         <service
             android:name="com.baidu.location.f"

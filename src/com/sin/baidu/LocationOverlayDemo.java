@@ -53,7 +53,7 @@ public class LocationOverlayDemo extends Activity {
 		FOLLOW
 	}
 	
-	private E_BUTTON_TYPE mCurBtnType;
+	
 	private MenuDlg mMenu=null;
 	// 定位相关
 	LocationClient mLocClient;
@@ -74,7 +74,7 @@ public class LocationOverlayDemo extends Activity {
 
 	//UI相关
 	OnCheckedChangeListener radioButtonListener = null;
-	Button requestLocButton = null;
+
 	boolean isRequest = false;//是否手动触发请求定位
 	boolean isFirstLoc = true;//是否首次定位
 	
@@ -97,47 +97,7 @@ public class LocationOverlayDemo extends Activity {
         setContentView(R.layout.activity_locationoverlay);//
         CharSequence titleLable="定位功能";
         setTitle(titleLable);
-        requestLocButton = (Button)findViewById(R.id.button_reqlocal);
-        mCurBtnType = E_BUTTON_TYPE.LOC;
-        OnClickListener btnClickListener = new OnClickListener() {
-        	public void onClick(View v) {
-				switch (mCurBtnType) {
-				case LOC:
-					//手动定位请求
-					requestLocClick();
-					break;
-				case COMPASS:
-					myLocationOverlay.setLocationMode(LocationMode.NORMAL);
-					requestLocButton.setText("定位");
-					mCurBtnType = E_BUTTON_TYPE.LOC;
-					break;
-				case FOLLOW:
-					myLocationOverlay.setLocationMode(LocationMode.COMPASS);
-					requestLocButton.setText("罗盘");
-					mCurBtnType = E_BUTTON_TYPE.COMPASS;
-					break;
-				}
-			}
-		};
-	    requestLocButton.setOnClickListener(btnClickListener);
-	    
-	    
-        RadioGroup group = (RadioGroup)this.findViewById(R.id.radioGroup);
-        radioButtonListener = new OnCheckedChangeListener() {
-        	
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				if (checkedId == R.id.defaulticon){
-					//传入null则，恢复默认图标
-					modifyLocationOverlayIcon(null);
-				}
-				if (checkedId == R.id.customicon){
-					//修改为自定义marker
-					modifyLocationOverlayIcon(getResources().getDrawable(R.drawable.icon_geo));
-				}
-			}
-		};
-		group.setOnCheckedChangeListener(radioButtonListener);
+        
         
 		//地图初始化
         mMapView = (MyLocationMapView)findViewById(R.id.bmapView);
@@ -158,7 +118,7 @@ public class LocationOverlayDemo extends Activity {
         option.setOpenGps(true);//打开gps
         option.setCoorType("bd09ll");     //设置坐标类型
         option.setScanSpan(2000);
-        option.disableCache(false);//cache the map data
+        option.disableCache(true);//cache the map data
         /*
          * option.setPoiNumber(5);     //最多返回POI个数  
 option.setPoiDistance(1000); //poi查询距离  
@@ -230,7 +190,7 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
         pop = new PopupOverlay(mMapView,popListener);
         MyLocationMapView.pop = pop;
 	}
-	BDLocation mLocation=null;
+	public BDLocation mLocation=null;
 	/**
      * 定位SDK监听函数
      */
@@ -260,8 +220,6 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
                 mMapController.animateTo(new GeoPoint((int)(locData.latitude* 1e6), (int)(locData.longitude *  1e6)));
                 isRequest = false;
                 myLocationOverlay.setLocationMode(LocationMode.FOLLOWING);
-				requestLocButton.setText("跟随");
-                mCurBtnType = E_BUTTON_TYPE.FOLLOW;
             }
             //首次定位完成
             isFirstLoc = false;
