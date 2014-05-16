@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -19,6 +20,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.map.ItemizedOverlay;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.OverlayItem;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.sin.baidu.LocationOverlayDemo;
 import com.sin.pub.AnimationUty;
 import com.sin.pub.IGridMenuDialog;
@@ -50,6 +55,16 @@ public class MenuDlg extends IGridMenuDialog {
 					@Override
 					public void onMenuClick() {
 						// TODO Auto-generated method stub
+						MapView mapview=((LocationOverlayDemo)mAct).mMapView;
+						BDLocation location=((LocationOverlayDemo) mAct).mLocation;
+						MyOverlay mOverlay = new MyOverlay(mAct.getResources().getDrawable(R.drawable.icon_marka),mapview);	
+				         GeoPoint p3 = new GeoPoint ((int)((location.getLatitude()+0.0005f)*1E6),(int)((location.getLongitude()+0.0005f)*1E6));
+				         OverlayItem item3 = new OverlayItem(p3,"覆盖物3","");
+				         item3.setMarker(mAct.getResources().getDrawable(R.drawable.icon_marka));
+				         mOverlay.addItem(item3);
+				         
+				         mapview.getOverlays().add(mOverlay);
+				         mapview.refresh();
 
 					}
 				}));
@@ -147,6 +162,42 @@ public class MenuDlg extends IGridMenuDialog {
 		return js;
 	}
 
+	
+
+class MyOverlay extends ItemizedOverlay{
+
+	public MyOverlay(Drawable defaultMarker, MapView mapView) {
+		super(defaultMarker, mapView);
+	}
+	
+
+	@Override
+	public boolean onTap(int index){
+		OverlayItem item = getItem(index);
+		return true;
+	}
+	
+	@Override
+	public boolean onTap(GeoPoint pt , MapView mMapView){
+		return false;
+	}
+	
+}
+
+void showPosition(double longitude,double latitude){
+	MapView mapview=((LocationOverlayDemo)mAct).mMapView;
+	BDLocation location=((LocationOverlayDemo) mAct).mLocation;
+	MyOverlay mOverlay = new MyOverlay(mAct.getResources().getDrawable(R.drawable.icon_marka),mapview);	
+     GeoPoint p3 = new GeoPoint ((int)((latitude)*1E6),(int)((longitude)*1E6));
+     OverlayItem item3 = new OverlayItem(p3,"覆盖物3","");
+     item3.setMarker(mAct.getResources().getDrawable(R.drawable.icon_marka));
+     mOverlay.addItem(item3);
+     
+     mapview.getOverlays().add(mOverlay);
+     mapview.refresh();
+
+}
+	
 	class MsgHandler extends Handler {
 		public static final int MSG_RCV_WEBSOCKET_MSG = 0;
 
@@ -160,7 +211,7 @@ public class MenuDlg extends IGridMenuDialog {
 							jsonObject.getString("Msg"), "UTF-8");
 					if (msgtype.equals("location")) {
 						JSONObject local = new JSONObject(msgs);
-						// setlocal(local.getDouble("longitude"),local.getDouble("latitude"));
+						showPosition(local.getDouble("longitude"),local.getDouble("latitude"));
 					} else if (msgtype.equals("msg")) {
 						// mtv.setText(msgs);
 					}

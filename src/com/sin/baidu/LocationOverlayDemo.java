@@ -2,12 +2,14 @@
 package com.sin.baidu;
 
 //import android.R;
+
 import com.sin.gpslocal.MenuDlg;
 import com.sin.gpslocal.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -29,10 +31,12 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.BMapManager;
+import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.LocationData;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationOverlay;
+import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.mapapi.map.MyLocationOverlay.LocationMode;
 import com.baidu.mapapi.map.PopupClickListener;
 import com.baidu.mapapi.map.PopupOverlay;
@@ -69,7 +73,7 @@ public class LocationOverlayDemo extends Activity {
 	
 	//地图相关，使用继承MapView的MyLocationMapView目的是重写touch事件实现泡泡处理
 	//如果不处理touch事件，则无需继承，直接使用MapView即可
-	MyLocationMapView mMapView = null;	// 地图View
+	public MyLocationMapView mMapView = null;	// 地图View
 	private MapController mMapController = null;
 
 	//UI相关
@@ -299,6 +303,10 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
     }
 
 }
+
+
+
+
 /**
  * 继承MapView重写onTouchEvent实现泡泡处理操作
  * @author hejin
