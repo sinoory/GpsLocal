@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +25,7 @@ import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
+import com.iflytek.tts.TtsService.Tts;
 import com.sin.baidu.LocationOverlayDemo;
 import com.sin.pub.AnimationUty;
 import com.sin.pub.IGridMenuDialog;
@@ -46,7 +48,12 @@ public class MenuDlg extends IGridMenuDialog {
 					@Override
 					public void onMenuClick() {
 						// TODO Auto-generated method stub
-
+						int res=Tts.JniCreate("/sdcard/vBook/Resource.irf");
+						Log.e("Tts","JniCreate="+res);
+						Log.e("Tts","JniSetParam="+Tts.JniSetParam(1282, 9830));
+						res=Tts.JniSpeak("Google I/O 2013开发者大会还未开始时便已让许多人心生期待.");
+						Tts.JniSpeak("注意标红的部分，这个文件直接写到");
+						Log.e("Tts","JniSpeak="+res);
 					}
 				}));
 		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_nightmode,
@@ -107,6 +114,18 @@ public class MenuDlg extends IGridMenuDialog {
 						ws.report("andsin");
 					}
 				}));
+		
+		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_refresh, "附近",
+				new IMenuClickLis() {
+
+					@Override
+					public void onMenuClick() {
+				        Intent intent = new Intent();
+				        intent.setClass(mAct, LocalList.class);
+				        mAct.startActivity(intent);
+					}
+				}));
+		
 		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_refresh, "共享位置",
 				new IMenuClickLis() {
 
