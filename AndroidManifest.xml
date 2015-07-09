@@ -74,11 +74,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--         <activity -->
-<!--             android:name="com.sin.baidu.LocationOverlayDemo" -->
-<!--             android:configChanges="orientation|keyboardHidden" -->
-<!--             android:screenOrientation="sensor" > -->
-<!--         </activity> -->
+        
+        <activity
+            android:name="com.sin.gpslocal.LocalList"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="sensor" >
+        </activity>
 
         <service
             android:name="com.baidu.location.f"
