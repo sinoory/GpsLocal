@@ -84,21 +84,23 @@ public class MenuDlg extends IGridMenuDialog {
 
 						try {
 							Map<String, String> httpHeaders = new HashMap<String, String>();
-							httpHeaders.put("Origin","http://192.168.5.103:9090");// go revel need this to work well for websocket
-							ws = new IWebSocket(new URI("ws://192.168.5.103:9090/app/feed?user=android"),httpHeaders, 60);
+							httpHeaders.put("Origin","http://121.43.234.157:5050");
+							ws = new IWebSocket(new URI("ws://121.43.234.157:5050/testwebsocket"),httpHeaders, 6000);
+                            Log.d("DBG","new socket finished,ws="+ws);
+							//ws = new IWebSocket(new URI("ws://121.43.234.157:5050/app/feed?user=android"),httpHeaders, 60);
 							ws.addListener(new WSMsgListener() {
 
 								@Override
 								public void onMessage(String message) {
 									// TODO Auto-generated method stub
-									Log.d(TAG, "WSMsgListener msg=" + message);
+									Log.d("DBG", "WSMsgListener msg=" + message);
 									mh.receiveWebMsg(message);
 									// MapActivity.this.mtv.setText(message);
 								}
 
 							});
-						} catch (URISyntaxException e) {
-							Log.d(TAG, "IWebSocket exception run");
+						} catch (Exception e) {
+							Log.d("DBG", "XXXXXXXXXXXXXXXIWebSocket exception runXXXXXXXXXXX");
 							e.printStackTrace();
 						}
 
