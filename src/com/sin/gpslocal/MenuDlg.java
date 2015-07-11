@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -112,8 +114,24 @@ public class MenuDlg extends IGridMenuDialog {
 
 					@Override
 					public void onMenuClick() {
-						// TODO Auto-generated method stub
-						ws.report("andsin");
+			            final EditText et=new EditText(mAct); 
+			            new AlertDialog.Builder(mAct)   
+			                .setTitle("用户名")   
+			                .setView(et) 
+			                .setPositiveButton("确定", new DialogInterface.OnClickListener(){ 
+			                    @Override 
+			                    public void onClick(DialogInterface arg0, int arg1) { 
+			                        String newname=et.getText().toString(); 
+			                        if(newname.equals("")){ 
+			                            return; 
+			                        } 
+						            ws.report(newname);
+			                    } 
+			                     
+			                })   
+			                .setNegativeButton("取消", null)   
+			                .show();
+
 					}
 				}));
 		
