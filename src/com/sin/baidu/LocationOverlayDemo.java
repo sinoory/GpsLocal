@@ -255,6 +255,7 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
   	}
 
   	public void showPopLocation(BDLocation location){
+        Log.d("DBG","showPopLocation");
 			popupText.setBackgroundResource(R.drawable.popup);
 		popupText.setText("我的位置\n"+location.getAddrStr());
 		pop.showPopup(BMapUtil.getBitmapFromView(popupText),
@@ -277,6 +278,8 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
     @Override
     protected void onDestroy() {
     	//退出时销毁定位
+        Log.d("DBG","LocationOverlayDemo onDestroy");
+        mMenu.onExit();
         if (mLocClient != null)
             mLocClient.stop();
         mMapView.destroy();

@@ -88,8 +88,14 @@ public class IWebSocket  {
 		}
 		
 	}
-	
+
+    public void close(){
+        if(mws!=null){
+            mws.close();
+        }
+    }
 	private void sendmsg(String msg){
+        Log.d("DBG","sendmsg mws.isClosed="+mws.isClosed()+",msg="+msg);
 		if (mws.isClosed()){
 			mws=new MWebSocket(mServerUri,mhttpHeaders,mConnectTimeout);
 			mws.connect();
@@ -108,33 +114,32 @@ public class IWebSocket  {
 	}
 	
 	private void sendmsg(String to,String msgtype,String msg){
-		JSONArray jsonArray = new JSONArray();
+		//JSONArray jsonArray = new JSONArray();
 		JSONObject object = new JSONObject();
 		try {
 			object.put("type", "send");
 			object.put("to", to);
 			object.put("Msgtype", msgtype);
 			object.put("msg", URLEncoder.encode(msg,"UTF-8"));
-			jsonArray.put(object);
+			//jsonArray.put(object);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String js=jsonArray.toString();
-		sendmsg(jsonArray.toString());
+		String js=object.toString();
+        Log.d("DBG","sendmsg msg="+js);
+		sendmsg(js);
 	}
 
 	public void report(String user){
-		JSONArray jsonArray = new JSONArray();
 		JSONObject object = new JSONObject();
 		try {
 			object.put("type", "report");
 			object.put("user", user);
-			jsonArray.put(object);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		sendmsg(jsonArray.toString());
+		sendmsg(object.toString());
 	}
 }

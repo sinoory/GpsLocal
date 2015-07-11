@@ -183,7 +183,9 @@ public class MenuDlg extends IGridMenuDialog {
 		return js;
 	}
 
-	
+    public void onExit(){
+        ws.close();
+    }
 
 class MyOverlay extends ItemizedOverlay{
 
@@ -206,6 +208,7 @@ class MyOverlay extends ItemizedOverlay{
 }
 
 void showPosition(double longitude,double latitude){
+    Log.d("DBG","showPosition("+longitude+","+latitude+")");
 	MapView mapview=((LocationOverlayDemo)mAct).mMapView;
 	BDLocation location=((LocationOverlayDemo) mAct).mLocation;
 	MyOverlay mOverlay = new MyOverlay(mAct.getResources().getDrawable(R.drawable.icon_marka),mapview);	
@@ -229,7 +232,7 @@ void showPosition(double longitude,double latitude){
 					JSONObject jsonObject = new JSONObject((String) msg.obj);
 					String msgtype = jsonObject.getString("Msgtype");
 					String msgs = URLDecoder.decode(
-							jsonObject.getString("Msg"), "UTF-8");
+							jsonObject.getString("msg"), "UTF-8");
 					if (msgtype.equals("location")) {
 						JSONObject local = new JSONObject(msgs);
 						showPosition(local.getDouble("longitude"),local.getDouble("latitude"));
@@ -245,6 +248,7 @@ void showPosition(double longitude,double latitude){
 		}
 
 		public void receiveWebMsg(String wsmsg) {
+            Log.d("DBG","receiveWebMsg msg="+wsmsg);
 			Message msg = android.os.Message.obtain();
 			msg.what = MSG_RCV_WEBSOCKET_MSG;
 			msg.obj = wsmsg;
