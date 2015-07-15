@@ -44,6 +44,7 @@ public class MenuDlg extends IGridMenuDialog {
 	public void setupGridMenu() {
 		setResouce(R.layout.gridview_menu, R.id.gridview, R.layout.item_menu,
 				R.id.item_image, R.id.item_text);
+		/*
 		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_nightmode,
 				"调试信息", new IMenuClickLis() {
 
@@ -77,7 +78,8 @@ public class MenuDlg extends IGridMenuDialog {
 
 					}
 				}));
-		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_search, "连接",
+				*/
+		changeItem("连接",new GridMenuItem(R.drawable.menu_search,R.drawable.menu_search, "连接",
 				new IMenuClickLis() {
 					@Override
 					public void onMenuClick() {
@@ -109,7 +111,7 @@ public class MenuDlg extends IGridMenuDialog {
 					}
 				}));
 
-		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_refresh, "上报",
+		changeItem("上报",new GridMenuItem(R.drawable.menu_refresh,R.drawable.menu_refresh, "上报",
 				new IMenuClickLis() {
 
 					@Override
@@ -134,19 +136,15 @@ public class MenuDlg extends IGridMenuDialog {
 
 					}
 				}));
-		
-		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_refresh, "附近",
-				new IMenuClickLis() {
-
-					@Override
-					public void onMenuClick() {
-				        Intent intent = new Intent();
-				        intent.setClass(mAct, LocalList.class);
-				        mAct.startActivity(intent);
-					}
-				}));
-		
-		mArrGridMenuItem.add(new GridMenuItem(R.drawable.menu_refresh, "共享位置",
+		changeItem("del",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"del",new IMenuClickLis(){
+			@Override
+			public void onMenuClick() {
+		        Intent intent = new Intent();
+		        intent.setClass(mAct, LocalList.class);
+		        mAct.startActivity(intent);
+				
+			}}));
+		changeItem("共享位置",new GridMenuItem(R.drawable.menu_refresh,R.drawable.menu_refresh, "共享位置",
 				new IMenuClickLis() {
 
 					@Override

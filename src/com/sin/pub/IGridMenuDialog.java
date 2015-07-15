@@ -4,12 +4,8 @@ package com.sin.pub;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.sin.pub.IGridMenuActivity.GridMenuItem;
-import com.sin.pub.IGridMenuActivity.IMenuClickLis;
 
-
-
-import android.R;
+//import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -32,22 +28,29 @@ import android.widget.AdapterView.OnItemClickListener;
  * Usage:
  * 1. extends your own MyMenudialog from IGridMenuDialog
  * 2. new MyMenudialog in some activity when activity.OnCreate,
- * and then setup you own grid menu, for example
+ * and then setup you own grid menu by override setupGridMenu(), for example
+    public void setupGridMenu() {
 		setResouce(R.layout.gridview_menu,R.id.gridview,R.layout.item_menu,R.id.item_image,R.id.item_text);
+        // will use the R.layout.gridview_menu and R.layout.item_menu to set menu. They are example layout.Change them at your needs.
 		mArrGridMenuItem.add(new GridMenuItem( R.drawable.menu_nightmode,"调试信息",new IMenuClickLis(){
-
 			@Override
 			public void onMenuClick() {
-				// TODO Auto-generated method stub
-
 			}}));
-		....add other menu and events
-	3.add the bellow code to you activity
+		//....add other menu and events
+    }
+	3.take MyMenudialog as a member of your activity,and add the bellow code to show dialog:
+    onCreate(){
+        ....
+        mMenu=new MyMenudialog();
+        mMenu.setupGridMenu();
+        mMenu.onCreateInit(this);
+        //u can change it by use changeItem and setItemEnable later
+    }
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
     	 if(keyCode == KeyEvent.KEYCODE_MENU) {
-    		 MyMenudialog.openMenu();
-    		 new Exception("").printStackTrace();
+    		 mMenu.openMenu();
+    		 //new Exception("").printStackTrace();
     		 return true;
     	 }
     	return super.onKeyUp(keyCode, event);
@@ -68,18 +71,25 @@ public class IGridMenuDialog  {
 	public class GridMenuItem{
 		
 		int mMenuImageId;
-		String mMenuText;
+		public String mMenuText;
 		IMenuClickLis mMenuClickLs;
-		public GridMenuItem(int MenuImageId,String MenuText,IMenuClickLis MenuClickLs){
+        boolean isDisabled=false;//use can set disable
+        int mMenuDisableImageId;
+        int mMenuEnableImageId;
+		public GridMenuItem(int MenuImageId,int disImgId,String MenuText,IMenuClickLis MenuClickLs){
 			this.mMenuImageId=MenuImageId;
+			this.mMenuEnableImageId=MenuImageId;
 			this.mMenuText=MenuText;
 			this.mMenuClickLs=MenuClickLs;
+            this.mMenuDisableImageId=disImgId;
 		}
 	}
 	
-	public void setMenu( ArrayList<GridMenuItem> arrGridMenuItem){
-		mArrGridMenuItem=arrGridMenuItem;
-	}
+    public void setupGridMenu() {
+		//setResouce(R.layout.gridview_menu,R.id.gridview,R.layout.item_menu,R.id.item_image,R.id.item_text);
+
+    }
+
 	public void setResouce(int LayoutGridviewMenu,int IdGridView,int LayoutItemMenu,int IdItemImage,int IdItemItext){
 		mLayoutGridviewMenu=LayoutGridviewMenu;
 		mIdGridView=IdGridView;  
@@ -119,7 +129,7 @@ public class IGridMenuDialog  {
 		
 		window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND) ;// 显示对话框时，后面的Activity不变暗，可选操作。
 		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();  
-        lp.alpha = 0.6f ;// 这是指定对话框的透明度，[0,1] float类型，所有要加f  
+        lp.alpha = 0.95f ;// 这是指定对话框的透明度，[0,1] float类型，所有要加f  
         //lp.x = -100 5  
         //lp.y = -100 ;  
         window.setAttributes(lp);  		
@@ -154,18 +164,48 @@ public class IGridMenuDialog  {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				IMenuClickLis mcl=mMapGridMenuItem.get(arg2).mMenuClickLs;
-				if(mcl!=null){
-					mcl.onMenuClick();
-				}
-				menuDialog.dismiss();
+                if(!mMapGridMenuItem.get(arg2).isDisabled){
+                    if(mcl!=null){
+                        mcl.onMenuClick();
+                    }
+                    menuDialog.dismiss();
+                }
 			}
 		});
 	}
-
+	ArrayList<String> mAMenuNames = new ArrayList<String>();
+    HashMap<String,GridMenuItem> mMNameMenus=new HashMap<String,GridMenuItem>();
+    //called by use when first create menu dialog
+    public void addItem(String itemName,GridMenuItem item){
+        mAMenuNames.add(itemName);
+        mMNameMenus.put(itemName,item);
+    }
+    //user can add item, or change item after created;
+    public void changeItem(String itemName,GridMenuItem newItem){
+        mMNameMenus.put(itemName,newItem);
+        if(!mAMenuNames.contains(itemName)){
+        	mAMenuNames.add(itemName);
+        }
+        if(menuGrid!=null){
+		    menuGrid.setAdapter(getMenuAdapter());
+        }
+    }
+    public void changeItem(String itemName,String menustr){
+        GridMenuItem item=getItem(itemName);
+        item.mMenuText=menustr;
+        changeItem(itemName,item);
+    }
+    public GridMenuItem getItem(String itemName){
+        return mMNameMenus.get(itemName);
+    }
+    public void setItemEnable(String itemName,boolean enable){
+        GridMenuItem item=mMNameMenus.get(itemName);
+        item.mMenuImageId=(enable)?item.mMenuEnableImageId:item.mMenuDisableImageId;
+    }
 	private SimpleAdapter getMenuAdapter() {
 		ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
-		for (int i = 0; i <this.mArrGridMenuItem.size(); i++) {
-			GridMenuItem gm = mArrGridMenuItem.get(i);
+		for (int i = 0; i <this.mAMenuNames.size(); i++) {
+			GridMenuItem gm = mMNameMenus.get(mAMenuNames.get(i));
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("itemImage", gm.mMenuImageId);
 			map.put("itemText", gm.mMenuText);
