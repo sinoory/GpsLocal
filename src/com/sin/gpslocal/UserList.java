@@ -41,6 +41,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.sintech.UserMenuDlg;
 
 public class UserList extends Activity {
@@ -92,6 +97,51 @@ public class UserList extends Activity {
 	int cnt = 0;
     String mCurUrl="";
     ImageView mImgMenu=null;
+    
+ // 定位客户端类
+ 	public LocationClient mLocationClient = null;
+ 	// 定位监听器类
+ 	public BDLocationListener myListener = new MyLocationListener();
+	public class MyLocationListener implements BDLocationListener {
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			if (location == null)
+				return;
+			StringBuffer sb = new StringBuffer(256);
+			sb.append("时间 : ");
+			sb.append(location.getLocType());
+			sb.append("\n纬度 : ");
+			sb.append(location.getLatitude());
+			sb.append("\n经度 : ");
+			sb.append(location.getLongitude());
+			sb.append("\n半径 : ");
+			if (location.getLocType() == BDLocation.TypeGpsLocation) {
+				sb.append("\n速度 : ");
+				sb.append(location.getSpeed());
+			}
+			Log.d("DBG","onReceiveLocation "+sb);
+		}
+
+		@Override
+		public void onReceivePoi(BDLocation arg0) {
+			
+		}
+	}
+	public void startGps(){
+		mLocationClient = new LocationClient(getApplicationContext());
+		// 设置定位参数
+		LocationClientOption option = new LocationClientOption();
+		option.setOpenGps(true); // 打开GPRS
+		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
+		option.setScanSpan(5000); // 设置发起定位请求的间隔时间为5000ms
+		// 设置获取地址信息
+		//option.setIsNeedAddress(true);
+		mLocationClient.setLocOption(option);
+		// 注册监听函数
+		mLocationClient.registerLocationListener(myListener);
+		// 调用此方法开始定位
+		mLocationClient.start();
+	}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,9 +262,18 @@ public class UserList extends Activity {
         mMenu.onCreateInit(this);
         //mMenu.setupObj(mobj);
         
+        startGps();
         
     }
-    
+    @Override
+    protected void onDestroy() {
+    	//退出时销毁定位
+        Log.d("DBG","UserList onDestroy");
+        if (mLocationClient != null)
+            mLocationClient.stop();
+
+    }
+
     void openMenuAccordingUrl(){
             mMenu.openMenu();
     }
