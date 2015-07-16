@@ -3,6 +3,7 @@ package com.sin.gpslocal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import com.sin.pub.IWebSocket;
 import com.sin.pub.IGridMenuActivity.GridMenuItem;
 import com.sin.pub.IGridMenuActivity.IMenuClickLis;
 import com.sin.pub.IWebSocket.WSMsgListener;
+import com.sin.pub.MJson;
 
 public class MenuDlg extends IGridMenuDialog {
 	public static String TAG = "MenuDlg";
@@ -136,14 +138,19 @@ public class MenuDlg extends IGridMenuDialog {
 
 					}
 				}));
-		changeItem("del",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"del",new IMenuClickLis(){
+		changeItem("showUser",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"showUser",new IMenuClickLis(){
 			@Override
 			public void onMenuClick() {
 		        Intent intent = new Intent();
-		        intent.setClass(mAct, LocalList.class);
+		        intent.setClass(mAct, UserList.class);
 		        mAct.startActivity(intent);
 				
 			}}));
+		changeItem("tst",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"tst",new IMenuClickLis(){
+			@Override
+			public void onMenuClick() {
+			}}));
+
 		changeItem("共享位置",new GridMenuItem(R.drawable.menu_refresh,R.drawable.menu_refresh, "共享位置",
 				new IMenuClickLis() {
 
@@ -223,21 +230,22 @@ class MyOverlay extends ItemizedOverlay{
 	
 }
 
-void showPosition(double longitude,double latitude){
-    Log.d("DBG","showPosition("+longitude+","+latitude+")");
-	MapView mapview=((LocationOverlayDemo)mAct).mMapView;
-	BDLocation location=((LocationOverlayDemo) mAct).mLocation;
-	MyOverlay mOverlay = new MyOverlay(mAct.getResources().getDrawable(R.drawable.icon_marka),mapview);	
-     GeoPoint p3 = new GeoPoint ((int)((latitude)*1E6),(int)((longitude)*1E6));
-     OverlayItem item3 = new OverlayItem(p3,"覆盖物3","");
-     item3.setMarker(mAct.getResources().getDrawable(R.drawable.icon_marka));
-     mOverlay.addItem(item3);
-     
-     mapview.getOverlays().add(mOverlay);
-     mapview.refresh();
+    void showPosition(double longitude,double latitude){
+        Log.d("DBG","showPosition("+longitude+","+latitude+")");
+        MapView mapview=((LocationOverlayDemo)mAct).mMapView;
+        BDLocation location=((LocationOverlayDemo) mAct).mLocation;
+        MyOverlay mOverlay = new MyOverlay(mAct.getResources().getDrawable(R.drawable.icon_marka),mapview);	
+        GeoPoint p3 = new GeoPoint ((int)((latitude)*1E6),(int)((longitude)*1E6));
+        OverlayItem item3 = new OverlayItem(p3,"覆盖物3","");
+        item3.setMarker(mAct.getResources().getDrawable(R.drawable.icon_marka));
+        mOverlay.addItem(item3);
 
-}
+        mapview.getOverlays().add(mOverlay);
+        mapview.refresh();
+
+    }
 	
+
 	class MsgHandler extends Handler {
 		public static final int MSG_RCV_WEBSOCKET_MSG = 0;
 
