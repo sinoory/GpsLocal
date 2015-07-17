@@ -156,6 +156,7 @@ public class MenuDlg extends IGridMenuDialog {
                 i.putExtra("MID_EDIT_TXT",(((LocationOverlayDemo) mAct).mAddressStr));
                 i.putExtra("FIRST_EDIT_TXT",
                     PreferenceManager.getDefaultSharedPreferences(mAct).getString("lastLine",""));
+                MJson.stringToJsonLine();
                 mAct.startActivity(i);
 
 			}}));

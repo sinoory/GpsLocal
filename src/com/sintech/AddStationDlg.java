@@ -16,6 +16,8 @@
 package com.sintech;
 
 import com.sin.gpslocal.R;
+import com.sin.pub.MJson;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,9 +71,9 @@ public class AddStationDlg extends Activity {
         mOkButton.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {				
-		        Intent i = new Intent();
-                PreferenceManager.getDefaultSharedPreferences(AddStationDlg.this).edit()
-                    .putString("lastLine",mFirstEdit.getText().toString()).commit();
+                MJson.addStation(AddStationDlg.this,mFirstEdit.getText().toString(),
+                    mMidEdit.getText().toString(),true,mBottomEdit.getText().toString(),-1);
+                    
 				finish();
 			}
 		});
