@@ -39,6 +39,7 @@ import com.sin.pub.IGridMenuActivity.IMenuClickLis;
 import com.sin.pub.IWebSocket.WSMsgListener;
 import com.sin.pub.MJson;
 import com.sintech.AddStationDlg;
+import com.sintech.RunningBus;
 
 public class MenuDlg extends IGridMenuDialog {
 	public static String TAG = "MenuDlg";
@@ -160,7 +161,12 @@ public class MenuDlg extends IGridMenuDialog {
                 mAct.startActivity(i);
 
 			}}));
-
+		changeItem("showBus",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"showBus",new IMenuClickLis(){
+			@Override
+			public void onMenuClick() {
+                Intent i = new Intent(mAct, RunningBus.class);
+                mAct.startActivity(i);
+			}}));
 		changeItem("共享位置",new GridMenuItem(R.drawable.menu_refresh,R.drawable.menu_refresh, "共享位置",
 				new IMenuClickLis() {
 

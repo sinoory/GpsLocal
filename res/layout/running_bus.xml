@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:padding="10dip">
+		<TextView android:id="@+id/IdBusname"
+            android:layout_height="wrap_content" android:layout_width="fill_parent" 
+            android:textSize="20dp"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            >
+        </TextView>
+
+	<LinearLayout android:layout_height="wrap_content"
+        android:layout_width="fill_parent" 
+        android:id="@+id/IdStations"
+        android:orientation="vertical"
+        >
+		
+	</LinearLayout>
+
+		<EditText android:id="@+id/IdMidEdit"
+			android:layout_height="wrap_content" android:layout_width="fill_parent" android:inputType="text"></EditText>
+    
+	
+	<LinearLayout android:layout_height="wrap_content"
+	android:layout_width="fill_parent" android:gravity="center" android:layout_marginTop="10dip">
+
+		<Button android:text="@string/Commons.Ok" android:id="@+id/EditBookmarkActivity.BtnOk"
+			android:layout_height="wrap_content" android:layout_weight="0.5" android:layout_width="fill_parent"></Button>
+		<Button android:text="@string/Commons.Cancel" android:id="@+id/EditBookmarkActivity.BtnCancel"
+			android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="0.5"></Button>
+	</LinearLayout>
+
+</LinearLayout>
