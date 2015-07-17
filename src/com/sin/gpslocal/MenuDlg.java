@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,7 @@ import com.sin.pub.IGridMenuActivity.GridMenuItem;
 import com.sin.pub.IGridMenuActivity.IMenuClickLis;
 import com.sin.pub.IWebSocket.WSMsgListener;
 import com.sin.pub.MJson;
+import com.sintech.AddStationDlg;
 
 public class MenuDlg extends IGridMenuDialog {
 	public static String TAG = "MenuDlg";
@@ -146,9 +148,16 @@ public class MenuDlg extends IGridMenuDialog {
 		        mAct.startActivity(intent);
 				
 			}}));
-		changeItem("tst",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"tst",new IMenuClickLis(){
+		changeItem("addStation",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"addStation",new IMenuClickLis(){
 			@Override
 			public void onMenuClick() {
+                Intent i = new Intent(mAct, AddStationDlg.class);
+                i.putExtra("BOTTOM_EDIT_TXT",getLocationStr(((LocationOverlayDemo) mAct).mLocation));
+                i.putExtra("MID_EDIT_TXT",(((LocationOverlayDemo) mAct).mAddressStr));
+                i.putExtra("FIRST_EDIT_TXT",
+                    PreferenceManager.getDefaultSharedPreferences(mAct).getString("lastLine",""));
+                mAct.startActivity(i);
+
 			}}));
 
 		changeItem("共享位置",new GridMenuItem(R.drawable.menu_refresh,R.drawable.menu_refresh, "共享位置",
@@ -174,7 +183,7 @@ public class MenuDlg extends IGridMenuDialog {
 							public void onClick(View v) {
 								ws.sendLocation(
 										ett.getText().toString(),
-										getLocationString(((LocationOverlayDemo) mAct).mLocation));
+										getLocationJsStr(((LocationOverlayDemo) mAct).mLocation));
 							}
 						});
 						// */
@@ -184,7 +193,17 @@ public class MenuDlg extends IGridMenuDialog {
 
 	}
 
-	public String getLocationString(BDLocation location) {
+	public String getLocationStr(BDLocation location) {
+
+		double longitude = 0;
+		double latitude = 0;
+		if (location != null) {
+			longitude = location.getLongitude();
+			latitude = location.getLatitude();
+		}
+        return longitude+":"+latitude;
+    }
+	public String getLocationJsStr(BDLocation location) {
 
 		double longitude = 0;
 		double latitude = 0;

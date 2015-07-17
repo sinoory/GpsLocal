@@ -254,10 +254,12 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
   		
   	}
 
+    public String mAddressStr=null;
   	public void showPopLocation(BDLocation location){
         Log.d("DBG","showPopLocation");
 			popupText.setBackgroundResource(R.drawable.popup);
 		popupText.setText("我的位置\n"+location.getAddrStr());
+        mAddressStr=location.getAddrStr();
 		pop.showPopup(BMapUtil.getBitmapFromView(popupText),
 				new GeoPoint((int)(location.getLatitude()*1e6), (int)(location.getLongitude()*1e6)),
 				8);  		

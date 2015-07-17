@@ -4,5 +4,6 @@
     <string name="app_name">GpsLocal</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="Commons.Ok">OK</string>
+    <string name="Commons.Cancel">Cancel</string>
 </resources>

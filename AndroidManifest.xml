@@ -87,7 +87,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="sensor" >
         </activity>
-
+        <activity android:name="com.sintech.AddStationDlg" android:theme="@android:style/Theme.Dialog" ></activity>
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
