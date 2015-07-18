@@ -9,7 +9,7 @@
         <p id="console"></p>
         <script>
             function dbg(msg){
-                $("#console").html(msg+$("#console").html());
+                $("#console").html(msg+"<br>"+$("#console").html());
             }
             $(document).ready(function(){
                 dbg("ok ready");
@@ -24,7 +24,42 @@
                     stations+="<p>"+businfo.stationUp[i].stname+"</p>"
                 }
                 $("#idStations").html(stations);
+
             });
+            function start(){
+                dbg("mLatestLoc="+mLatestLoc);
+                if(!mLatestLoc){
+                    dbg("no Gps!!");
+                    return;
+                }
+                mStartLoc=JSON.parse(mLatestLoc);
+                var ls=businfo.stationUp;
+                var dist=800;
+                for(var i=0;i<ls.length;i++){
+                    var thisdist=parseInt(getDisance(mStartLoc.la,mStartLoc.lo,ls[i].la,ls[i].lo));
+                    dbg("thisdist from "+ls[i].stname+"="+thisdist);
+                    if(thisdist<dist){
+                        dist=thisdist;
+                        mStartStation=ls[i];
+                    }
+                    if(mStartStation){
+                        dbg("get start station "+mStartStation.stname);
+                    }
+                }
+            }
+            function onGpsPos(loc){
+                mLatestLoc=loc;
+            }
+            function toRad(d) {  return d * Math.PI / 180; }
+            function getDisance(lat1, lng1, lat2, lng2) { //lat为纬度, lng为经度, 一定不要弄错
+                var dis = 0;
+                var radLat1 = toRad(lat1);
+                var radLat2 = toRad(lat2);
+                var deltaLat = radLat1 - radLat2;
+                var deltaLng = toRad(lng1) - toRad(lng2);
+                var dis = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(deltaLng / 2), 2)));
+                return dis * 6378137;
+            } 
         </script>
     </body>
 </html>

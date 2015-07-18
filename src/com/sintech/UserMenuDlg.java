@@ -4,21 +4,22 @@ import android.util.Log;
 
 import com.sin.pub.IGridMenuDialog;
 import com.sin.gpslocal.R;
-
+import com.sin.gpslocal.UserList;
 public class UserMenuDlg extends IGridMenuDialog{
     public void setupGridMenu() {
 		setResouce(R.layout.gridview_menu,R.id.gridview,R.layout.item_menu,R.id.item_image,R.id.item_text);
+		changeItem("start",new GridMenuItem( R.drawable.button_play,R.drawable.button_pause,"start",new IMenuClickLis(){
+			@Override
+			public void onMenuClick() {
+                ((UserList)mAct).start();
+			}}));
+
         //changeRead2Read();
         //addnew();
         //adddel();
     }
 /*
     void changeRead2Read(){
-		changeItem("read",new GridMenuItem( R.drawable.button_play,R.drawable.button_pause,"read",new IMenuClickLis(){
-			@Override
-			public void onMenuClick() {
-                changeRead2Stop();
-			}}));
     }
 
     void changeRead2Stop(){

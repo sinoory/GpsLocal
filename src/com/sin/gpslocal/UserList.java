@@ -103,6 +103,11 @@ public class UserList extends Activity {
 
         }
 	};
+
+    public void start(){
+        Log.d("DBG","next call js start");
+        mWebView.loadUrl("javascript:start()");
+    }
 	
 	BusServer mobj;
 	
@@ -119,19 +124,23 @@ public class UserList extends Activity {
 		public void onReceiveLocation(BDLocation location) {
 			if (location == null)
 				return;
+            
 			StringBuffer sb = new StringBuffer(256);
-			sb.append("时间 : ");
-			sb.append(location.getLocType());
-			sb.append("\n纬度 : ");
+            sb.append("{");
+			//sb.append("时间 : ");
+			//sb.append(location.getLocType());
+			sb.append("\"la\":");
 			sb.append(location.getLatitude());
-			sb.append("\n经度 : ");
+			sb.append(",\"lo\":");
 			sb.append(location.getLongitude());
-			sb.append("\n半径 : ");
 			if (location.getLocType() == BDLocation.TypeGpsLocation) {
-				sb.append("\n速度 : ");
+				sb.append(",\"speed\":");
 				sb.append(location.getSpeed());
 			}
-			Log.d("DBG","onReceiveLocation "+sb);
+            sb.append("}");
+            mWebView.loadUrl("javascript:onGpsPos('"+sb+"')");
+			Log.d("DBG","onReceiveLocation 1"+sb);
+
 		}
 
 		@Override
@@ -145,7 +154,7 @@ public class UserList extends Activity {
 		LocationClientOption option = new LocationClientOption();
 		option.setOpenGps(true); // 打开GPRS
 		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-		option.setScanSpan(5000); // 设置发起定位请求的间隔时间为5000ms
+		option.setScanSpan(1000*10); // 设置发起定位请求的间隔时间为5000ms
 		// 设置获取地址信息
 		//option.setIsNeedAddress(true);
 		mLocationClient.setLocOption(option);
