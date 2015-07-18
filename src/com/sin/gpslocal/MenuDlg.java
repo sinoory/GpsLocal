@@ -164,7 +164,7 @@ public class MenuDlg extends IGridMenuDialog {
 		changeItem("showBus",new GridMenuItem( R.drawable.menu_refresh,R.drawable.menu_refresh,"showBus",new IMenuClickLis(){
 			@Override
 			public void onMenuClick() {
-                Intent i = new Intent(mAct, RunningBus.class);
+                Intent i = new Intent(mAct, UserList.class);
                 mAct.startActivity(i);
 			}}));
 		changeItem("共享位置",new GridMenuItem(R.drawable.menu_refresh,R.drawable.menu_refresh, "共享位置",

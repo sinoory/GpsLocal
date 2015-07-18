@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,6 +21,7 @@ import android.app.KeyguardManager.KeyguardLock;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -87,12 +89,22 @@ public class UserList extends Activity {
     }
 
 
-	private Handler mUiHandler = new Handler();
 	UserMenuDlg mMenu;
-	class MyObject{
+	class BusServer_{
+        public String getBusInfo(){
+            String linename=sp.getString("lastLine","");
+            if(linename.equals("")){
+                Log.d("DBG","initBusStation no line");
+                return "";
+            }
+            String js=sp.getString(linename,"{'name':'"+linename+"','stationUp':[],'stationDn':[]}");
+            Log.d("DBG","getBusInfo="+js);
+            return js;
+
+        }
 	};
 	
-	MyObject mobj;
+	BusServer mobj;
 	
 	int cnt = 0;
     String mCurUrl="";
@@ -142,6 +154,8 @@ public class UserList extends Activity {
 		// 调用此方法开始定位
 		mLocationClient.start();
 	}
+
+    SharedPreferences sp=null;//PreferenceManager.getDefaultSharedPreferences(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,13 +189,14 @@ public class UserList extends Activity {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
     	WindowManager winManager=(WindowManager)getSystemService(this.WINDOW_SERVICE);
         
-        //mobj=new MyObject(this,mHandler,mUiHandler);
+        mobj=new BusServer(this);
+        mobj.impl=new BusServer_();
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
 		//SCRIPT_MARK.d("Temp","w="+metric.widthPixels+",h="+metric.heightPixels+",dm.density="+metric.density);
         //mobj.setDeviceInfo((int)(metric.widthPixels/metric.density), (int)(metric.heightPixels/metric.density));
         //mobj.setSysinfo(WordUty.getDeviceIdNum(this));
-        mWebView.addJavascriptInterface(mobj, "my"+"Ob"+"je"+"ct");
+        mWebView.addJavascriptInterface(mobj, "b"+"u"+"s"+"s");
         
         PackageManager pm = getPackageManager();//context为当前Activity上下文 
         PackageInfo pi;
@@ -263,6 +278,7 @@ public class UserList extends Activity {
         //mMenu.setupObj(mobj);
         
         startGps();
+        sp=PreferenceManager.getDefaultSharedPreferences(this);
         
     }
     @Override
