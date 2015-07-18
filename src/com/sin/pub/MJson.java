@@ -10,7 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class MJson{
-    public static JSONArray insertJSONArrayElem(JSONObject root,String arrayName, JSONArray jarray,int pos,String element) {
+    public static JSONArray insertJSONArrayElem(JSONObject root,String arrayName, JSONArray jarray,int pos,JSONObject element) {
         JSONArray Njarray=new JSONArray();
         try{
             boolean inserted=false;
@@ -42,7 +42,11 @@ public class MJson{
             JSONObject jsonObject = new JSONObject(line);
             String stationtype=direct?"stationUp":"stationDn";
             JSONArray array=jsonObject.getJSONArray(stationtype);
-            insertJSONArrayElem(jsonObject,stationtype,array,index,stationname+STATION_SEP+location);
+            JSONObject eleStation=new JSONObject();
+            eleStation.put("stname",stationname);
+            eleStation.put("lo",location.split(":")[0]);
+            eleStation.put("la",location.split(":")[1]);
+            insertJSONArrayElem(jsonObject,stationtype,array,index,eleStation);
             Log.d("DBG","addStation newline="+jsonObject.toString());
             sp.edit()
                 .putString(linename,jsonObject.toString())
@@ -61,7 +65,7 @@ public class MJson{
             JSONObject jsonObject = new JSONObject(js);
             Log.d("DBG","linename="+jsonObject.getString("name"));
             JSONArray array = jsonObject.getJSONArray("stationUp");
-            array=MJson.insertJSONArrayElem(jsonObject,"stationUp",array,0,"zhangjian=3232.32:432.3");
+            //array=MJson.insertJSONArrayElem(jsonObject,"stationUp",array,0,"zhangjian=3232.32:432.3");
             String firstStation=array.getString(1);
             Log.d("DBG","new array="+array.toString());
             Log.d("DBG","new json string="+jsonObject.toString());

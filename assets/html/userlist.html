@@ -19,10 +19,9 @@
                 }
                 businfo= JSON.parse(info);
                 $("#idBusname").text(businfo.name);
-                dbg("len="+businfo.stationUp[0].split("=")[0]+"<br>");
                 var stations="";
                 for(var i=0;i<businfo.stationUp.length;i++){
-                    stations+="<p>"+businfo.stationUp[i].split("=")[0]+"</p>"
+                    stations+="<p>"+businfo.stationUp[i].stname+"</p>"
                 }
                 $("#idStations").html(stations);
             });
