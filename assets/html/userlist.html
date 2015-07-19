@@ -21,11 +21,19 @@
                 $("#idBusname").text(businfo.name);
                 var stations="";
                 for(var i=0;i<businfo.stationUp.length;i++){
-                    stations+="<p id='idstation"+i+"'>"+businfo.stationUp[i].stname+"</p>"
+                    stations+="<p id='idstation"+i+"'>"+businfo.stationUp[i].stname;
+                    stations+="&nbsp;<span id='idstTm"+i+"'></span>";
+                    stations+="&nbsp;<span id='idstDist"+i+"'></span>";
+                    stations+="&nbsp;<span id='idstSpeed"+i+"'></span>";
+                    stations+="</p>";
                 }
                 $("#idStations").html(stations);
 
             });
+            function getHMS(timstap){
+                var ts=new Date(parseInt(timstap) * 1000).toLocaleString();
+                return ts.split(" ")[4];
+            }
             function start(){
                 try{
                     start_();
@@ -34,6 +42,7 @@
                 }
             }
             var MIN_IN_STATION_DIST=50;
+            var mStartBus=false;
             function start_(){
                 if(!mLatestLoc){
                     dbg("no Gps!!");
@@ -51,41 +60,55 @@
                         ls[i].enterTm=new Date().getTime();
                         mCurrStationIndex=i;
                         mNextSationIndex=i+1;
+                        mStartBus=true;
                         $("#idstation"+mCurrStationIndex).css("color","#F9F900");//yellow
+                        $("#idstTm"+mCurrStationIndex).html(getHMS(ls[i].enterTm));
                     }
                 }
-                if(mCurrStationIndex>=0){
+                if(mStartBus){
                     dbg("get start station "+ls[mCurrStationIndex].stname);
                 }else{
                     dbg("too far from any station");
                 }
             }
             function updateStaion(){//in station : yellow ; left staion : green , done station : red
+                if(!mStartBus){
+                    return;
+                }
                 dbg("u: cur="+mCurrStationIndex+",next="+mNextSationIndex);
-                var ls=businfo.stationUp,dist,nextStationIndex;
+                var ls=businfo.stationUp,dist,nextStationIndex,speedDistIndex,thisdist="";
                 if(mCurrStationIndex>=0){
-                    var thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mCurrStationIndex].la,ls[mCurrStationIndex].lo));
+                    thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mCurrStationIndex].la,ls[mCurrStationIndex].lo));
                     dbg("u:c: dist from cur "+ls[mCurrStationIndex].stname+" = "+thisdist);
                     if(thisdist>MIN_IN_STATION_DIST){//leave curr
                         $("#idstation"+mCurrStationIndex).css("color","#6C6C6C");//red
                         ls[mCurrStationIndex].leaveTm=new Date().getTime();
+                        $("#idstTm"+mCurrStationIndex).html($("#idstTm"+mCurrStationIndex).html()+"-"+getHMS(ls[mCurrStationIndex].leaveTm));
+                        $("#idstSpeed"+mCurrStationIndex).html("");
+                        $("#idstDist"+mCurrStationIndex).html("");
                         mNextSationIndex=mCurrStationIndex+1;
                         mCurrStationIndex=-1;
                     }
-                    return;
-                }
-                if(mNextSationIndex>0 && mNextSationIndex<ls.length){
-                    var thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
+                }else if(mNextSationIndex>0 && mNextSationIndex<ls.length){
+                    thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
                     dbg("u:c: dist from next "+ls[mNextSationIndex].stname+" = "+thisdist);
                     if(thisdist<=MIN_IN_STATION_DIST){//enter next
                         mCurrStationIndex=mNextSationIndex;
                         mNextSationIndex++;
                         $("#idstation"+mCurrStationIndex).css("color","#F9F900");//yellow
                         ls[mCurrStationIndex].enterTm=new Date().getTime();
+                        $("#idstTm"+mCurrStationIndex).html(getHMS(ls[mCurrStationIndex].enterTm));
                     }
                 }
+                speedDistIndex = mCurrStationIndex || mNextSationIndex;
+                $("#idstDist"+speedDistIndex).html(thisdist);
+                if("speed" in mLatestLoc){
+                    $("#idstSpeed"+speedDistIndex).html(mLatestLoc.speed);
+                }
+
             }
             function onGpsPos(loc){
+                dbg("onGpsPos loc="+loc);
                 mLatestLoc=JSON.parse(loc);
                 updateStaion();
             }
