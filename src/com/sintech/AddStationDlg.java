@@ -20,6 +20,7 @@ import com.sin.pub.MJson;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -71,8 +72,16 @@ public class AddStationDlg extends Activity {
         mOkButton.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {				
+                String line=mFirstEdit.getText().toString();
                 MJson.addStation(AddStationDlg.this,mFirstEdit.getText().toString(),
                     mMidEdit.getText().toString(),true,mBottomEdit.getText().toString(),-1);
+                SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(AddStationDlg.this);
+                String alllines=sp.getString("alllines","");
+                Log.d("DBG","addStation alllines="+alllines+",line="+line);
+                if(alllines.indexOf(line)==-1){
+                    alllines+=","+line;
+                    sp.edit().putString("alllines",alllines).commit();;
+                }
                     
 				finish();
 			}

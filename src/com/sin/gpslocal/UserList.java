@@ -48,7 +48,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.sintech.UserMenuDlg;
+import com.sin.pub.IGridMenuDialog;
 
 public class UserList extends Activity {
 	private static final String TAG = "WordAct";
@@ -88,8 +88,26 @@ public class UserList extends Activity {
         mHandler.sendMessage(message); 
     }
 
+    class BusMenuDlg extends IGridMenuDialog{
+        public void setupGridMenu() {
+            setResouce(R.layout.gridview_menu,R.id.gridview,R.layout.item_menu,R.id.item_image,R.id.item_text);
+            changeItem("start",new GridMenuItem( R.drawable.button_play,R.drawable.button_pause,"start",new IMenuClickLis(){
+                @Override
+                public void onMenuClick() {
+                    ((UserList)mAct).start();
+                }}));
+            changeItem("lines",new GridMenuItem( R.drawable.button_play,R.drawable.button_pause,"lines",new IMenuClickLis(){
+                @Override
+                public void onMenuClick() {
+                    Intent intent = new Intent();
+                    intent.setClass(UserList.this, BusList.class);
+                    mAct.startActivity(intent);
+                }}));
 
-	UserMenuDlg mMenu;
+        }
+    }
+
+	BusMenuDlg mMenu;
 	class BusServer_{
         public String getBusInfo(){
             String linename=sp.getString("lastLine","");
@@ -281,7 +299,7 @@ public class UserList extends Activity {
         	mWebView.loadUrl("file:///android_asset/html/userlist.html");
         }
 
-        mMenu=new UserMenuDlg();
+        mMenu=new BusMenuDlg();
         mMenu.setupGridMenu();
         mMenu.onCreateInit(this);
         //mMenu.setupObj(mobj);

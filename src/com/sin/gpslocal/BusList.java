@@ -91,16 +91,16 @@ public class BusList extends Activity {
 
 	UserMenuDlg mMenu;
 	class JsHander_{
-        public String getBusInfo(){
-            String linename=sp.getString("lastLine","");
-            if(linename.equals("")){
-                Log.d("DBG","initBusStation no line");
-                return "";
-            }
-            String js=sp.getString(linename,"{'name':'"+linename+"','stationUp':[],'stationDn':[]}");
-            Log.d("DBG","getBusInfo="+js);
-            return js;
-
+        public String getShp(String key){
+            String val=sp.getString(key,"");
+            Log.d("DBG","getShp("+key+")="+val);
+            return val;
+        }
+        public void setShp(String key,String val){
+            sp.edit().putString(key,val).commit();
+        }
+        public void rmShp(String key){
+            sp.edit().remove(key).commit();
         }
 	};
 
@@ -229,7 +229,7 @@ public class BusList extends Activity {
         	mWebView.loadUrl("file:///sdcard/words/html/wordsMaintype.html");
         }else{
         	//SCRIPT_MARK.d(TAG,"Load from assert,"+fromsdcard);
-        	mWebView.loadUrl("file:///android_asset/html/userlist.html");
+        	mWebView.loadUrl("file:///android_asset/html/linelist.html");
         }
 
         mMenu=new UserMenuDlg();
