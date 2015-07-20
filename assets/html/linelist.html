@@ -14,20 +14,22 @@
             $(document).ready(function(){
                 dbg("ok ready");
                 lines=window.jh.getShp("alllines");
-                dbg("lines="+lines);
+                //dbg("lines="+lines);
                 if(lines){
                     lines=lines.split(",");
                     var linehtml="";
                     for(var i=0;i<lines.length;i++){
                         linehtml+="<p id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i]+"</p>";
-                        linehtml+="<p id='idopr"+i+"' style='display:none'  ><button onclick='selectline()' >select</button></p>";
+                        linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='selectline()' >select</button>";
+                        linehtml+="<button onclick='deleteline()'>deleteline</button>";
+                        linehtml+="</p>";
                     }
                     $("#idlines").html(linehtml);
                 }
             });
             var mLastShowOprLine=-1;
             function showOpr(line){
-                dbg("showOpr line="+line+",last="+mLastShowOprLine);
+                //dbg("showOpr line="+line+",last="+mLastShowOprLine);
                 if(mLastShowOprLine!=-1){
                     $("#idopr"+mLastShowOprLine).css("display","none");
                 }
@@ -36,6 +38,13 @@
             }
             function selectline(){
                 window.jh.setShp("lastLine",lines[mLastShowOprLine]);
+            }
+            function deleteline(){
+                window.jh.rmShp(lines[mLastShowOprLine]);
+                lines.splice(mLastShowOprLine,1);
+                window.jh.setShp("alllines",lines.join(","));
+                $("#idLine"+mLastShowOprLine).css("display","none");
+                $("#idopr"+mLastShowOprLine).css("display","none");
             }
             function getHMS(timstap){
                 var ts=new Date(parseInt(timstap) * 1000).toLocaleString();

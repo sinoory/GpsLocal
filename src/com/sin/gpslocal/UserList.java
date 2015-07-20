@@ -315,6 +315,7 @@ public class UserList extends Activity {
         if (mLocationClient != null)
             mLocationClient.stop();
 
+        super.onDestroy();
     }
 
     void openMenuAccordingUrl(){
