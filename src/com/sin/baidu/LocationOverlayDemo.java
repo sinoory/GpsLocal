@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -82,6 +83,8 @@ public class LocationOverlayDemo extends Activity {
 	boolean isRequest = false;//是否手动触发请求定位
 	boolean isFirstLoc = true;//是否首次定位
 	
+    ImageView mImgMenu=null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,13 +105,19 @@ public class LocationOverlayDemo extends Activity {
         CharSequence titleLable="定位功能";
         setTitle(titleLable);
         
-        
+        mImgMenu=(ImageView)findViewById(R.id.BubbleRightView);
+        mImgMenu.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+    		    mMenu.openMenu();
+            }
+        });
+       
 		//地图初始化
         mMapView = (MyLocationMapView)findViewById(R.id.bmapView);
         mMapController = mMapView.getController();
         mMapView.getController().setZoom(14);
         mMapView.getController().enableClick(true);
-        mMapView.setBuiltInZoomControls(true);
+        //mMapView.setBuiltInZoomControls(true);
       //创建 弹出泡泡图层
         createPaopao();
         
