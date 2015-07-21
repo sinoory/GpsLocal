@@ -126,7 +126,6 @@ public class BusList extends Activity {
         mImgMenu=(ImageView)findViewById(R.id.BubbleRightView);
         mImgMenu.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                openMenuAccordingUrl();
             }
         });
 
