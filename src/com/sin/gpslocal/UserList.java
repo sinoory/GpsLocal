@@ -49,6 +49,7 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.sin.pub.IGridMenuDialog;
+import com.sin.pub.file.AndFileUty;
 
 public class UserList extends Activity {
 	private static final String TAG = "WordAct";
@@ -290,10 +291,10 @@ public class UserList extends Activity {
 
         
 
-        int fromsdcard=1 ; //AndFileUty.isExist(this,"/words/html/","wordsMaintype.html");
+        int fromsdcard=AndFileUty.isExist(this,"/sin/gps/html/","userlist.html");
         if(fromsdcard==0){
         	//SCRIPT_MARK.d(TAG,"Load from sdcard");
-        	mWebView.loadUrl("file:///sdcard/words/html/wordsMaintype.html");
+        	mWebView.loadUrl("file:///sdcard/sin/gps/html/userlist.html");
         }else{
         	//SCRIPT_MARK.d(TAG,"Load from assert,"+fromsdcard);
         	mWebView.loadUrl("file:///android_asset/html/userlist.html");
