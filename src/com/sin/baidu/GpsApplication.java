@@ -1,13 +1,21 @@
 package com.sin.baidu;
 
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.MKGeneralListener;
 import com.baidu.mapapi.map.MKEvent;
+import com.sin.pub.IWebSocket;
+import com.sin.pub.IWebSocket.WSMsgListener;
 
 
 public class GpsApplication extends Application {
@@ -22,6 +30,9 @@ public class GpsApplication extends Application {
 	    super.onCreate();
 		mInstance = this;
 		initEngineManager(this);
+        //initConn();
+        Log.d("DBG","GpsApplication onCreate finis,this="+this);
+        //new Exception("e").printStackTrace();
 	}
 	
 	public void initEngineManager(Context context) {
@@ -34,6 +45,43 @@ public class GpsApplication extends Application {
                     "BMapManager  初始化错误!", Toast.LENGTH_LONG).show();
         }
 	}
+
+	public static IWebSocket ws = null;
+    public void initConn(){
+        synchronized(this){
+            if(ws!=null){
+                Log.d("DBG","App initConn ws inited ,ignore");
+                return;
+            }
+            try {
+                Map<String, String> httpHeaders = new HashMap<String, String>();
+                httpHeaders.put("Origin","http://121.43.234.157:5050");
+                ws = new IWebSocket(new URI("ws://121.43.234.157:5050/testwebsocket"),httpHeaders, 6000);
+                Log.d("DBG","new socket finished,ws="+ws);
+                //ws = new IWebSocket(new URI("ws://121.43.234.157:5050/app/feed?user=android"),httpHeaders, 60);
+                ws.addListener(new WSMsgListener() {
+                    @Override
+                    public void onMessage(String message) {
+                        Log.d("DBG", "WSMsgListener msg=" + message);
+                        for(WSMsgListener ls : mWsLisers){
+                            ls.onMessage(message);
+                        }
+                        //mh.receiveWebMsg(message);
+                    }
+                });
+            } catch (Exception e) {
+                Log.d("DBG", "XXXXXXXXXXXXXXXIWebSocket exception runXXXXXXXXXXX");
+                e.printStackTrace();
+            }
+        }
+    }
+    private ArrayList<WSMsgListener> mWsLisers=new ArrayList<WSMsgListener>();
+    public void registerListener(WSMsgListener ls){
+        mWsLisers.add(ls);
+    }
+    public void removeListener(WSMsgListener ls){
+        mWsLisers.remove(ls);
+    }
 	
 	public static GpsApplication getInstance() {
 		return mInstance;

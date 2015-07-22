@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.HttpAuthHandler;
+import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -48,7 +49,9 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.sin.baidu.GpsApplication;
 import com.sin.pub.IGridMenuDialog;
+import com.sin.pub.IWebSocket.WSMsgListener;
 import com.sin.pub.file.AndFileUty;
 
 public class UserList extends Activity {
@@ -119,9 +122,19 @@ public class UserList extends Activity {
             String js=sp.getString(linename,"{'name':'"+linename+"','stationUp':[],'stationDn':[]}");
             Log.d("DBG","getBusInfo="+js);
             return js;
+        }
 
+        public void sendMsg(String msg){
+            Log.d("DBG","sendMsg("+msg+")");
+            app.ws.sendmsg(msg);
         }
 	};
+    WSMsgListener mwsListener=new WSMsgListener(){
+        @Override
+        public void onMessage(String message) {
+            mWebView.loadUrl("javascript:onWsMessage('"+message+"')");
+        }
+    };
 
     public void start(){
         Log.d("DBG","next call js start");
@@ -307,8 +320,14 @@ public class UserList extends Activity {
         
         startGps();
         sp=PreferenceManager.getDefaultSharedPreferences(this);
+
+        app = (GpsApplication)this.getApplication();
+        app.initConn();
+        Log.d("DBG","UserList app="+app);
         
     }
+    GpsApplication app = null;
+
     @Override
     protected void onDestroy() {
     	//退出时销毁定位
@@ -324,8 +343,17 @@ public class UserList extends Activity {
     }
     @Override
     protected void onResume() {
+        app.registerListener(mwsListener);
     	super.onResume();
     }
+
+    @Override
+    protected void onPause() {
+        app.removeListener(mwsListener);
+    	super.onPause();
+    }
+
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
     	//SCRIPT_MARK.d(TAG,"onKeyDown keyCode="+keyCode);

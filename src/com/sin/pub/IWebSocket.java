@@ -94,7 +94,7 @@ public class IWebSocket  {
             mws.close();
         }
     }
-	private void sendmsg(String msg){
+	public void sendmsg(String msg){
         Log.d("DBG","sendmsg mws.isClosed="+mws.isClosed()+",msg="+msg);
 		if (mws.isClosed()){
 			mws=new MWebSocket(mServerUri,mhttpHeaders,mConnectTimeout);

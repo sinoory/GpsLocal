@@ -6,18 +6,26 @@
         <h3 id="idBusname" align="center" >Welcome</h3>
         <div id="idStations">
         </div>
+        <button onclick='test()'>test</button>
         <p id="console"></p>
         <script>
             function dbg(msg){
                 $("#console").html(msg+"<br>"+$("#console").html());
             }
+            var DBG=false;
             $(document).ready(function(){
                 dbg("ok ready");
-                var info=window.buss.getBusInfo();
+                var info;
+                if(!DBG){
+                    info=window.buss.getBusInfo();
+                    businfo= JSON.parse(info);
+                }else{
+                    info="{&quot;stationDn&quot;:[],&quot;stationUp&quot;:[{&quot;la&quot;:&quot;31.216691&quot;,&quot;lo&quot;:&quot;121.626835&quot;,&quot;stname&quot;:&quot;AAAA&quot;},{&quot;lo&quot;:&quot;121.629542&quot;,&quot;la&quot;:&quot;31.221043&quot;,&quot;stname&quot;:&quot;BBBBB&quot;},{&quot;la&quot;:&quot;31.226894&quot;,&quot;lo&quot;:&quot;121.63886&quot;,&quot;stname&quot;:&quot;CCCC&quot;},{&quot;lo&quot;:&quot;121.639386&quot;,&quot;la&quot;:&quot;31.228422&quot;,&quot;stname&quot;:&quot;DDDD&quot;},{&quot;la&quot;:&quot;31.243441&quot;,&quot;lo&quot;:&quot;121.638352&quot;,&quot;stname&quot;:&quot;EEEE&quot;}],&quot;name&quot;:&quot;BBBB&quot;}";
+                    businfo= JSON.parse(info.replace(/&quot;/g,"\""));
+                }
                 if(info==""){
                     return;
                 }
-                businfo= JSON.parse(info);
                 $("#idBusname").text(businfo.name);
                 var stations="";
                 for(var i=0;i<businfo.stationUp.length;i++){
@@ -28,13 +36,11 @@
                     stations+="</p>";
                 }
                 $("#idStations").html(stations);
-                tstime();
 
             });
             function getHMS(timstap){
-                var ts=new Date(timstap).toLocaleString();
-                //dbg(timstap+"=>"+ts);
-                return ts.split(" ")[4];
+                var ts=new Date(timstap);
+                return ts.getHours()+":"+ts.getMinutes()+":"+ts.getSeconds();
             }
             function start(){
                 try{
@@ -43,15 +49,27 @@
                     dbg("error:"+e.name+":"+e.message);
                 }
             }
+            function test(){
+                try{
+                dbg("next send msg");
+                var js={"type":"report","user":"sin"};
+                window.buss.sendMsg(JSON.stringify(js));
+                }catch(e){
+                    dbg("send e :"+e.name+":"+e.message);
+                }
+            }
             var MIN_IN_STATION_DIST=50;
             var mStartBus=false;
             function start_(){
+                var ls=businfo.stationUp;
+                if(DBG){
+                    mLatestLoc=ls[1];
+                }
                 if(!mLatestLoc){
                     dbg("no Gps!!");
                     return;
                 }
                 mStartLoc=(mLatestLoc);
-                var ls=businfo.stationUp;
                 var dist=MIN_IN_STATION_DIST;
                 for(var i=0;i<ls.length;i++){
                     var thisdist=(getDisance(mStartLoc.la,mStartLoc.lo,ls[i].la,ls[i].lo));
@@ -62,7 +80,7 @@
                         mCurrStationIndex=i;
                         mNextSationIndex=i+1;
                         mStartBus=true;
-                        $("#idstation"+mCurrStationIndex).css("color","#F9F900");//yellow
+                        $("#idstation"+mCurrStationIndex).css("color","#D26900");//yellow
                     }
                 }
                 if(mStartBus){
@@ -95,16 +113,19 @@
                         $("#idstDist"+mCurrStationIndex).html("");
                         mNextSationIndex=mCurrStationIndex+1;
                         mCurrStationIndex=-1;
+
+                        thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
+                        updateDistSpeed(mNextSationIndex,thisdist);
                     }
                 }else if(mNextSationIndex>0 && mNextSationIndex<ls.length){
                     thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
-                    dbg("u:n: dist from next "+ls[mNextSationIndex].stname+" = "+thisdist);
+                    dbg("u:n: dist from next "+ls[mNextSationIndex].stname+" = "+thisdist+",tm="+getHMS(tm));
                     updateDistSpeed(mNextSationIndex,thisdist);
-                    $("#idstTm"+mCurrStationIndex).html(getHMS(tm));
+                    $("#idstTm"+mNextSationIndex).html(getHMS(tm));
                     if(thisdist<=MIN_IN_STATION_DIST){//enter next
                         mCurrStationIndex=mNextSationIndex;
                         mNextSationIndex++;
-                        $("#idstation"+mCurrStationIndex).css("color","#F9F900");//yellow
+                        $("#idstation"+mCurrStationIndex).css("color","#D26900");//yellow
                     }
                 }
 
@@ -123,6 +144,8 @@
                 }catch(e){
                     dbg("us error:"+e.name+":"+e.message);
                 }
+            }
+            function onWsMessage(msg){ //msg from websocket server
             }
             function toRad(d) {  return d * Math.PI / 180; }
             function getDisance(lat1, lng1, lat2, lng2) { //lat为纬度, lng为经度, 一定不要弄错

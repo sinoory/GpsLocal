@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.HttpAuthHandler;
+import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -92,14 +93,17 @@ public class BusList extends Activity {
 
 	UserMenuDlg mMenu;
 	class JsHander_{
+        @JavascriptInterface
         public String getShp(String key){
             String val=sp.getString(key,"");
             Log.d("DBG","getShp("+key+")="+val);
             return val;
         }
+        @JavascriptInterface
         public void setShp(String key,String val){
             sp.edit().putString(key,val).commit();
         }
+        @JavascriptInterface
         public void rmShp(String key){
             sp.edit().remove(key).commit();
         }

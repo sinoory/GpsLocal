@@ -94,6 +94,7 @@ public class LocationOverlayDemo extends Activity {
          * 并在地图地图模块销毁后销毁，只要还有地图模块在使用，BMapManager就不应该销毁
          */
         GpsApplication app = (GpsApplication)this.getApplication();
+        Log.d("DBG","Map app="+app);
         if (app.mBMapManager == null) {
             app.mBMapManager = new BMapManager(getApplicationContext());
             /**

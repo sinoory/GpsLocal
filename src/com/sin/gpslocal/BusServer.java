@@ -16,4 +16,9 @@ public class BusServer{
     public String getBusInfo(){
     	return impl.getBusInfo();
     }
+
+    @JavascriptInterface
+    public void sendMsg(String msg){
+        impl.sendMsg(msg);
+    }
 }
