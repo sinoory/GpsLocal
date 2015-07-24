@@ -21,4 +21,9 @@ public class BusServer{
     public void sendMsg(String msg){
         impl.sendMsg(msg);
     }
+
+    @JavascriptInterface
+    public String getDeviceId(){
+        return impl.getDeviceId();
+    }
 }

@@ -52,7 +52,9 @@ import com.baidu.location.LocationClientOption;
 import com.sin.baidu.GpsApplication;
 import com.sin.pub.IGridMenuDialog;
 import com.sin.pub.IWebSocket.WSMsgListener;
+import com.sin.pub.JsLocalHander;
 import com.sin.pub.file.AndFileUty;
+import com.sin.pub.SinDevice;
 
 public class UserList extends Activity {
 	private static final String TAG = "WordAct";
@@ -128,6 +130,9 @@ public class UserList extends Activity {
             Log.d("DBG","sendMsg("+msg+")");
             app.ws.sendmsg(msg);
         }
+        public String getDeviceId(){
+            return SinDevice.getDeviceIdNum(UserList.this);
+        }
 	};
     WSMsgListener mwsListener=new WSMsgListener(){
         @Override
@@ -142,6 +147,7 @@ public class UserList extends Activity {
     }
 	
 	BusServer mobj;
+    JsLocalHander jlh;
 	
 	int cnt = 0;
     String mCurUrl="";
@@ -230,14 +236,17 @@ public class UserList extends Activity {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
     	WindowManager winManager=(WindowManager)getSystemService(this.WINDOW_SERVICE);
         
+        sp=PreferenceManager.getDefaultSharedPreferences(this);
         mobj=new BusServer(this);
         mobj.impl=new BusServer_();
+        jlh=new JsLocalHander(sp);
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
 		//SCRIPT_MARK.d("Temp","w="+metric.widthPixels+",h="+metric.heightPixels+",dm.density="+metric.density);
         //mobj.setDeviceInfo((int)(metric.widthPixels/metric.density), (int)(metric.heightPixels/metric.density));
         //mobj.setSysinfo(WordUty.getDeviceIdNum(this));
         mWebView.addJavascriptInterface(mobj, "b"+"u"+"s"+"s");
+        mWebView.addJavascriptInterface(jlh, "j"+"l"+"h");
         
         PackageManager pm = getPackageManager();//context为当前Activity上下文 
         PackageInfo pi;
@@ -250,7 +259,6 @@ public class UserList extends Activity {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        
         mWebView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -319,7 +327,6 @@ public class UserList extends Activity {
         //mMenu.setupObj(mobj);
         
         startGps();
-        sp=PreferenceManager.getDefaultSharedPreferences(this);
 
         app = (GpsApplication)this.getApplication();
         app.initConn();
