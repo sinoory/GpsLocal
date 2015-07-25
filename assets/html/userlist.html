@@ -160,7 +160,14 @@
                 }
             }
             function onWsMessage(msg){ //msg from websocket server
-                dbg("onWsMessage "+msg);
+                var js=JSON.parse(msg);
+                if(js.type=="re-querryid"){
+                    jlh.setShp("id",js.userid);
+                    dbg("onWsMessage id="+js.userid);
+                    if(js.nickname){
+                        jlh.setShp("nickname",js.nickname);
+                    }
+                }
             }
             function toRad(d) {  return d * Math.PI / 180; }
             function getDisance(lat1, lng1, lat2, lng2) { //lat为纬度, lng为经度, 一定不要弄错

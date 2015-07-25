@@ -1,14 +1,22 @@
 package com.sin.pub;
 
+import com.sin.baidu.GpsApplication;
+
+import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 public class JsLocalHander{
     private SharedPreferences sp=null;
+    private GpsApplication app=null;
 
     public JsLocalHander(SharedPreferences s){
         sp=s;
+    }
+
+    public void setApp(GpsApplication a){
+        app=a;
     }
 
     @JavascriptInterface
@@ -24,6 +32,11 @@ public class JsLocalHander{
     @JavascriptInterface
     public void rmShp(String key){
         sp.edit().remove(key).commit();
+    }
+
+    @JavascriptInterface
+    public void sendMsg(String msg){
+        app.ws.sendmsg(msg);
     }
 };
 

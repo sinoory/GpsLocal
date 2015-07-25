@@ -22,6 +22,7 @@
                         linehtml+="<p id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i]+"</p>";
                         linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='selectline()' >select</button>";
                         linehtml+="<button onclick='deleteline()'>deleteline</button>";
+                        linehtml+="<button onclick='uploadline()'>upload</button>";
                         linehtml+="</p>";
                     }
                     $("#idlines").html(linehtml);
@@ -45,6 +46,12 @@
                 window.jh.setShp("alllines",lines.join(","));
                 $("#idLine"+mLastShowOprLine).css("display","none");
                 $("#idopr"+mLastShowOprLine).css("display","none");
+            }
+            function uploadline(){
+                var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
+                var js={"type":"uploadLine","stations":jsline.stationUp,
+                    "name":jsline.name,"ownerid":jh.getShp("id")};
+                jh.sendMsg(JSON.stringify(js));
             }
             function getHMS(timstap){
                 var ts=new Date(parseInt(timstap) * 1000).toLocaleString();

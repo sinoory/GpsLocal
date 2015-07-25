@@ -49,6 +49,8 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.sin.baidu.GpsApplication;
+import com.sin.pub.JsLocalHander;
 import com.sin.pub.file.AndFileUty;
 import com.sintech.UserMenuDlg;
 
@@ -114,7 +116,7 @@ public class BusList extends Activity {
         mWebView.loadUrl("javascript:start()");
     }
 	
-	JsHander_ mobj;
+	JsLocalHander mobj;
 	
 	int cnt = 0;
     String mCurUrl="";
@@ -154,7 +156,10 @@ public class BusList extends Activity {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
     	WindowManager winManager=(WindowManager)getSystemService(this.WINDOW_SERVICE);
         
-        mobj=new JsHander_();
+        sp=PreferenceManager.getDefaultSharedPreferences(this);
+
+        mobj=new JsLocalHander(sp);
+        mobj.setApp((GpsApplication)this.getApplication());
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
 		//SCRIPT_MARK.d("Temp","w="+metric.widthPixels+",h="+metric.heightPixels+",dm.density="+metric.density);
@@ -241,7 +246,6 @@ public class BusList extends Activity {
         mMenu.onCreateInit(this);
         //mMenu.setupObj(mobj);
         
-        sp=PreferenceManager.getDefaultSharedPreferences(this);
         
     }
     @Override
