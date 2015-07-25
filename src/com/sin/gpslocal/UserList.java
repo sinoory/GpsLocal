@@ -50,6 +50,7 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.sin.baidu.GpsApplication;
+import com.sin.baidu.LocationOverlayDemo;
 import com.sin.pub.IGridMenuDialog;
 import com.sin.pub.IWebSocket.WSMsgListener;
 import com.sin.pub.JsLocalHander;
@@ -108,6 +109,27 @@ public class UserList extends Activity {
                     Intent intent = new Intent();
                     intent.setClass(UserList.this, BusList.class);
                     mAct.startActivity(intent);
+                }}));
+            changeItem("serverlines",new GridMenuItem( R.drawable.button_play,R.drawable.button_pause,"serverlines",new IMenuClickLis(){
+                @Override
+                public void onMenuClick() {
+                    Intent intent = new Intent();
+                    intent.setClass(UserList.this, ServerBusList.class);
+                    mAct.startActivity(intent);
+                }}));
+            changeItem("map",new GridMenuItem( R.drawable.button_play,R.drawable.button_pause,"map",new IMenuClickLis(){
+                @Override
+                public void onMenuClick() {
+                    Intent intent = new Intent();
+                    intent.setClass(UserList.this, LocationOverlayDemo.class);
+                    mAct.startActivity(intent);
+                }}));
+
+            changeItem("exit",new GridMenuItem( R.drawable.button_play,R.drawable.button_pause,"exit",new IMenuClickLis(){
+                @Override
+                public void onMenuClick() {
+                    finish();
+                    System.exit(0);
                 }}));
 
         }
@@ -177,7 +199,7 @@ public class UserList extends Activity {
 			}
             sb.append("}");
             mWebView.loadUrl("javascript:onGpsPos('"+sb+"')");
-			Log.d("DBG","onReceiveLocation 1"+sb);
+			//Log.d("DBG","onReceiveLocation 1"+sb);
 
 		}
 

@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <script src="../js/jquery_mini.js"></script>
+    </head>
+    <body>
+        <h3 id="idBusname" align="center" >Server Lines</h3>
+        <div id="idlines">
+        </div>
+        <p id="console"></p>
+        <script>
+            function dbg(msg){
+                $("#console").html(msg+"<br>"+$("#console").html());
+            }
+            $(document).ready(function(){
+                jh.sendMsg(JSON.stringify({"type":"getlines"}));
+                dbg("in serverlist");
+            });
+            function readyfun(){
+            };
+            var mLastShowOprLine=-1;
+            function showOpr(line){
+                //dbg("showOpr line="+line+",last="+mLastShowOprLine);
+                if(mLastShowOprLine!=-1){
+                    $("#idopr"+mLastShowOprLine).css("display","none");
+                }
+                mLastShowOprLine=line;
+                $("#idopr"+mLastShowOprLine).css("display","block");
+            }
+            function selectline(){
+                window.jh.setShp("lastLine",lines[mLastShowOprLine]);
+            }
+            function deleteline(){
+                window.jh.rmShp(lines[mLastShowOprLine]);
+                lines.splice(mLastShowOprLine,1);
+                window.jh.setShp("alllines",lines.join(","));
+                $("#idLine"+mLastShowOprLine).css("display","none");
+                $("#idopr"+mLastShowOprLine).css("display","none");
+            }
+            function uploadline(){
+                var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
+                var js={"type":"uploadLine","stations":jsline.stationUp,
+                    "name":jsline.name,"ownerid":jh.getShp("id")};
+                jh.sendMsg(JSON.stringify(js));
+            }
+            function getHMS(timstap){
+                var ts=new Date(parseInt(timstap) * 1000).toLocaleString();
+                return ts.split(" ")[4];
+            }
+            function onWsMessage(msg){
+                try{
+                    onWsMessage_(msg);
+                }catch(e){
+                    dbg("onWsMessage e="+e);
+                }
+            }
+            function onWsMessage_(msg){ //msg from websocket server
+                var js=JSON.parse(msg);
+                if(js.type=="re-getlines"){
+                    dbg("ok,get resp from server");
+                    lines=js.res;
+                    var linehtml="";
+                    for(var i=0;i<lines.length;i++){
+                        linehtml+="<p id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i].name+"</p>";
+                        linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='watchline()' >watch</button>";
+                        linehtml+="<button onclick='deleteline()'>deleteline</button>";
+                        linehtml+="</p>";
+                    }
+                    $("#idlines").html(linehtml);
+                    dbg("finish re-getlines");
+                }
+            }
+        </script>
+    </body>
+</html>
