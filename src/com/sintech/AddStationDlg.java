@@ -15,6 +15,9 @@
 
 package com.sintech;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sin.gpslocal.R;
 import com.sin.pub.MJson;
 
@@ -69,10 +72,14 @@ public class AddStationDlg extends Activity {
         
         Intent ii=getIntent();
         Bundle extras = ii.getExtras();
+        final List<String> invalidLineNames=Arrays.asList("id","alllines");
         mOkButton.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {				
                 String line=mFirstEdit.getText().toString();
+                if(invalidLineNames.indexOf(line)!=-1){
+                    return;
+                }
                 MJson.addStation(AddStationDlg.this,mFirstEdit.getText().toString(),
                     mMidEdit.getText().toString(),true,mBottomEdit.getText().toString(),-1);
                 SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(AddStationDlg.this);

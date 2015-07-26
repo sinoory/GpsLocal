@@ -36,11 +36,11 @@ public class MJson{
     public static void addStation(Context ctx,String linename,String stationname,
             boolean direct,String location,int index){
         SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(ctx);
-        String line=sp.getString(linename,"{'name':'"+linename+"','stationUp':[],'stationDn':[]}");
+        String line=sp.getString(linename,"{'name':'"+linename+"','stations':[],'stationDn':[]}");
         Log.d("DBG","addStation line="+line);
         try{
             JSONObject jsonObject = new JSONObject(line);
-            String stationtype=direct?"stationUp":"stationDn";
+            String stationtype=direct?"stations":"stationDn";
             JSONArray array=jsonObject.getJSONArray(stationtype);
             JSONObject eleStation=new JSONObject();
             eleStation.put("stname",stationname);
@@ -60,12 +60,12 @@ public class MJson{
 		
 	}
 	public static void stringToJsonLine(){
-        String js="{'name':'line8','stationUp':['guanLanLu=123.2:323.7','jinkeLu=323.2:343.6']}";
+        String js="{'name':'line8','stations':['guanLanLu=123.2:323.7','jinkeLu=323.2:343.6']}";
         try{
             JSONObject jsonObject = new JSONObject(js);
             Log.d("DBG","linename="+jsonObject.getString("name"));
-            JSONArray array = jsonObject.getJSONArray("stationUp");
-            //array=MJson.insertJSONArrayElem(jsonObject,"stationUp",array,0,"zhangjian=3232.32:432.3");
+            JSONArray array = jsonObject.getJSONArray("stations");
+            //array=MJson.insertJSONArrayElem(jsonObject,"stations",array,0,"zhangjian=3232.32:432.3");
             String firstStation=array.getString(1);
             Log.d("DBG","new array="+array.toString());
             Log.d("DBG","new json string="+jsonObject.toString());

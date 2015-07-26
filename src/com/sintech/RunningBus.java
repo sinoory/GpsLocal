@@ -71,10 +71,10 @@ public class RunningBus extends Activity {
             Log.d("DBG","initBusStation no line");
             return;
         }
-        String js=sp.getString(linename,"{'name':'"+linename+"','stationUp':[],'stationDn':[]}");
+        String js=sp.getString(linename,"{'name':'"+linename+"','stations':[],'stationDn':[]}");
         try{
             JSONObject jsonObject = new JSONObject(js);
-            JSONArray array = jsonObject.getJSONArray("stationUp");
+            JSONArray array = jsonObject.getJSONArray("stations");
             TextView busname=(TextView)findViewById(R.id.IdBusname);
             busname.setText(jsonObject.getString("name"));
             LinearLayout ll=(LinearLayout)findViewById(R.id.IdStations);

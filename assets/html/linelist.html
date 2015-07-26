@@ -49,7 +49,7 @@
             }
             function uploadline(){
                 var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
-                var js={"type":"uploadLine","stations":jsline.stationUp,
+                var js={"type":"uploadLine","stations":jsline.stations,
                     "name":jsline.name,"ownerid":jh.getShp("id")};
                 jh.sendMsg(JSON.stringify(js));
             }

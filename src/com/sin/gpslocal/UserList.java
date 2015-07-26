@@ -129,7 +129,8 @@ public class UserList extends Activity {
                 @Override
                 public void onMenuClick() {
                     finish();
-                    System.exit(0);
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                    //System.exit(0);
                 }}));
 
         }
@@ -143,7 +144,7 @@ public class UserList extends Activity {
                 Log.d("DBG","initBusStation no line");
                 return "";
             }
-            String js=sp.getString(linename,"{'name':'"+linename+"','stationUp':[],'stationDn':[]}");
+            String js=sp.getString(linename,"{'name':'"+linename+"','stations':[],'stationDn':[]}");
             Log.d("DBG","getBusInfo="+js);
             return js;
         }

@@ -21,29 +21,29 @@
                 }
             });
             function readFunc(){
-                dbg("ok ready");
+                dbg("ok ready A");
                 var info;
+                getIdIfNeed();
                 if(!DBG){
                     info=window.buss.getBusInfo();
+                    if(info==""){
+                        return;
+                    }
                     businfo= JSON.parse(info);
                 }else{
-                    info="{&quot;stationDn&quot;:[],&quot;stationUp&quot;:[{&quot;la&quot;:&quot;31.216691&quot;,&quot;lo&quot;:&quot;121.626835&quot;,&quot;stname&quot;:&quot;AAAA&quot;},{&quot;lo&quot;:&quot;121.629542&quot;,&quot;la&quot;:&quot;31.221043&quot;,&quot;stname&quot;:&quot;BBBBB&quot;},{&quot;la&quot;:&quot;31.226894&quot;,&quot;lo&quot;:&quot;121.63886&quot;,&quot;stname&quot;:&quot;CCCC&quot;},{&quot;lo&quot;:&quot;121.639386&quot;,&quot;la&quot;:&quot;31.228422&quot;,&quot;stname&quot;:&quot;DDDD&quot;},{&quot;la&quot;:&quot;31.243441&quot;,&quot;lo&quot;:&quot;121.638352&quot;,&quot;stname&quot;:&quot;EEEE&quot;}],&quot;name&quot;:&quot;BBBB&quot;}";
+                    info="{&quot;stationDn&quot;:[],&quot;stations&quot;:[{&quot;la&quot;:&quot;31.216691&quot;,&quot;lo&quot;:&quot;121.626835&quot;,&quot;stname&quot;:&quot;AAAA&quot;},{&quot;lo&quot;:&quot;121.629542&quot;,&quot;la&quot;:&quot;31.221043&quot;,&quot;stname&quot;:&quot;BBBBB&quot;},{&quot;la&quot;:&quot;31.226894&quot;,&quot;lo&quot;:&quot;121.63886&quot;,&quot;stname&quot;:&quot;CCCC&quot;},{&quot;lo&quot;:&quot;121.639386&quot;,&quot;la&quot;:&quot;31.228422&quot;,&quot;stname&quot;:&quot;DDDD&quot;},{&quot;la&quot;:&quot;31.243441&quot;,&quot;lo&quot;:&quot;121.638352&quot;,&quot;stname&quot;:&quot;EEEE&quot;}],&quot;name&quot;:&quot;BBBB&quot;}";
                     businfo= JSON.parse(info.replace(/&quot;/g,"\""));
-                }
-                if(info==""){
-                    return;
                 }
                 $("#idBusname").text(businfo.name);
                 var stations="";
-                for(var i=0;i<businfo.stationUp.length;i++){
-                    stations+="<p id='idstation"+i+"'>"+businfo.stationUp[i].stname;
+                for(var i=0;i<businfo.stations.length;i++){
+                    stations+="<p id='idstation"+i+"'>"+businfo.stations[i].stname;
                     stations+="&nbsp;<span align='right' id='idstTm"+i+"'></span>";
                     stations+="&nbsp;<span align='right' id='idstDist"+i+"'></span>";
                     stations+="&nbsp;<span align='right' id='idstSpeed"+i+"'></span>";
                     stations+="</p>";
                 }
                 $("#idStations").html(stations);
-                getIdIfNeed();
             }
             function getHMS(timstap){
                 var ts=new Date(timstap);
@@ -57,7 +57,7 @@
                 }
             }
             function getIdIfNeed(){
-                if(jlh.getShp("id")==""){
+                if(!jlh.getShp("id")){
                     var devid=buss.getDeviceId();
                     dbg("no id,devid="+devid); 
                     buss.sendMsg(JSON.stringify({type:'querryid',devid:devid}));
@@ -75,7 +75,7 @@
             var MIN_IN_STATION_DIST=50;
             var mStartBus=false;
             function start_(){
-                var ls=businfo.stationUp;
+                var ls=businfo.stations;
                 if(DBG){
                     mLatestLoc=ls[1];
                 }
@@ -112,7 +112,7 @@
                     return;
                 }
                 dbg("u: cur="+mCurrStationIndex+",next="+mNextSationIndex);
-                var ls=businfo.stationUp,dist,nextStationIndex,speedDistIndex,thisdist="";
+                var ls=businfo.stations,dist,nextStationIndex,speedDistIndex,thisdist="";
                 var tm=new Date().getTime();
                 if(mCurrStationIndex>=0){
                     thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mCurrStationIndex].la,ls[mCurrStationIndex].lo));

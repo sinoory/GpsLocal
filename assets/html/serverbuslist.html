@@ -12,8 +12,9 @@
                 $("#console").html(msg+"<br>"+$("#console").html());
             }
             $(document).ready(function(){
+                linenames=jh.getShp("alllines").split(",");
                 jh.sendMsg(JSON.stringify({"type":"getlines"}));
-                dbg("in serverlist");
+                dbg("in serverlist A");
             });
             function readyfun(){
             };
@@ -26,19 +27,36 @@
                 mLastShowOprLine=line;
                 $("#idopr"+mLastShowOprLine).css("display","block");
             }
-            function selectline(){
-                window.jh.setShp("lastLine",lines[mLastShowOprLine]);
+            function catchExc(func){
+                try{
+                    func();
+                }catch(e){
+                    dbg(e);
+                }
+            }
+            function downloadline(){
+                catchExc(downloadline_);
+            }
+            function downloadline_(){
+                var line=alllines[mLastShowOprLine];
+                dbg("DBG downloadline lineind="+mLastShowOprLine+",line="+JSON.stringify(line));
+                window.jh.setShp(line.name,JSON.stringify(line));
+                linenames.push(line.name);
+                dbg("DBG downloadline alllines="+linenames.join(","));
+                window.jh.setShp("alllines",linenames.join(","));
             }
             function deleteline(){
+                /*
                 window.jh.rmShp(lines[mLastShowOprLine]);
                 lines.splice(mLastShowOprLine,1);
                 window.jh.setShp("alllines",lines.join(","));
+                */
                 $("#idLine"+mLastShowOprLine).css("display","none");
                 $("#idopr"+mLastShowOprLine).css("display","none");
             }
             function uploadline(){
                 var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
-                var js={"type":"uploadLine","stations":jsline.stationUp,
+                var js={"type":"uploadLine","stations":jsline.stations,
                     "name":jsline.name,"ownerid":jh.getShp("id")};
                 jh.sendMsg(JSON.stringify(js));
             }
@@ -57,12 +75,24 @@
                 var js=JSON.parse(msg);
                 if(js.type=="re-getlines"){
                     dbg("ok,get resp from server");
-                    lines=js.res;
-                    var linehtml="";
+                    var lines=js.res;
+                    alllines=lines;
+                    var linehtml="",allstations="";
+                    var mid=jh.getShp("id");
                     for(var i=0;i<lines.length;i++){
                         linehtml+="<p id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i].name+"</p>";
-                        linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='watchline()' >watch</button>";
-                        linehtml+="<button onclick='deleteline()'>deleteline</button>";
+                        for(var j=0;j<lines[i].stations.length;j++){
+                            allstations+=(lines[i].stations[j].stname+",");
+                        }
+                        linehtml+="<p>"+allstations+"</p>";
+                        linehtml+="<p align='right' id='idopr"+i+"' style='display:none' >";
+                        var localline=jh.getShp(lines[i].name);
+                        if(mid==lines[i].ownerid){
+                            linehtml+="<button onclick='deleteline()'>delete</button>";
+                        }
+                        if(!localline){
+                            linehtml+="<button onclick='downloadline()'>download</button>";
+                        }
                         linehtml+="</p>";
                     }
                     $("#idlines").html(linehtml);
