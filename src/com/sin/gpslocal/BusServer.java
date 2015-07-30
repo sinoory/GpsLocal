@@ -26,4 +26,9 @@ public class BusServer{
     public String getDeviceId(){
         return impl.getDeviceId();
     }
+
+    @JavascriptInterface
+    public void prepConn(){
+        impl.prepConn();
+    }
 }

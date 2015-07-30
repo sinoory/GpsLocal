@@ -21,7 +21,7 @@ import android.util.Log;
 
 /** This example demonstrates how to create a websocket connection to a server. Only the most important callbacks are overloaded. */
 public class IWebSocket  {
-	static final String TAG="IWebSocket";
+	static final String TAG="DBG";
 	
 	private MWebSocket mws=null;
 	private Map<String,String> mhttpHeaders=null;
@@ -53,15 +53,16 @@ public class IWebSocket  {
 	}
 	
 	class MWebSocket extends WebSocketClient {
-		
+	    public boolean isOpened=false;	
 		public MWebSocket( URI serverUri , Map<String,String> httpHeaders , int connectTimeout ) {
 			super(serverUri,new Draft_17(),httpHeaders,connectTimeout);
 		}
 
 		@Override
 		public void onOpen( ServerHandshake handshakedata ) {
-			Log.d(TAG, "opened connection" );
+			Log.d("DBG", "ws opened connection" );
 			// if you plan to refuse connection based on ip or httpfields overload: onWebsocketHandshakeReceivedAsClient
+            isOpened=true;
 		}
 
 		@Override
@@ -93,6 +94,10 @@ public class IWebSocket  {
         if(mws!=null){
             mws.close();
         }
+    }
+
+    public boolean isOpened(){
+        return mws.isOpened;
     }
 	public void sendmsg(String msg){
         Log.d("DBG","sendmsg mws.isClosed="+mws.isClosed()+",msg="+msg);

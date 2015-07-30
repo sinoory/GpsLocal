@@ -47,11 +47,11 @@ public class GpsApplication extends Application {
 	}
 
 	public static IWebSocket ws = null;
-    public void initConn(){
+    public boolean initConn(){
         synchronized(this){
             if(ws!=null){
                 Log.d("DBG","App initConn ws inited ,ignore");
-                return;
+                return true;
             }
             try {
                 Map<String, String> httpHeaders = new HashMap<String, String>();
@@ -69,9 +69,11 @@ public class GpsApplication extends Application {
                         //mh.receiveWebMsg(message);
                     }
                 });
+                return true;
             } catch (Exception e) {
                 Log.d("DBG", "XXXXXXXXXXXXXXXIWebSocket exception runXXXXXXXXXXX");
                 e.printStackTrace();
+                return false;
             }
         }
     }

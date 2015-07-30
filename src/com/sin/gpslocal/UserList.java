@@ -64,34 +64,27 @@ public class UserList extends Activity {
 	WebView mWebView;
 	JSONObject j;
 
-    public static final int MSG_SCROLL_WORD=1;
+    public static final int MSG_WS_READY=1;
     public static final int MSG_GOBACK=2;
-    public static final int MSG_START_LISTEN_VOLKEY=3;
-    public static final int MSG_STOP_LISTEN_VOLKEY=4;
 	private Handler mHandler = new Handler(){
         public void handleMessage(Message msg){
+            Log.d("DBG","handleMessage what="+msg.what);
             switch(msg.what){
-            case MSG_SCROLL_WORD:
-                //SCRIPT_MARK.d(TAG,"MSG_SCROLL_WORD");
-				//mWebView.loadUrl("javascript:dbg('MSG_SCROLL_WORD-from_handler')");
-                break;
             case MSG_GOBACK:
                 mWebView.goBack();
                 break;
-            case MSG_START_LISTEN_VOLKEY:
-                //SCRIPT_MARK.d(TAG,"MSG_START_LISTEN_VOLKEY");
+            case MSG_WS_READY:
+				mWebView.loadUrl("javascript:onWsReady()");
                 break;
-            case MSG_STOP_LISTEN_VOLKEY:
-                //SCRIPT_MARK.d(TAG,"MSG_STOP_LISTEN_VOLKEY");
-                break;
+
             }
 
         }
     };
 
-    void postGoBack(){ 
+    void postMsg(int what){ 
         Message message = new Message(); 
-        message.what = MSG_GOBACK; 
+        message.what = what; 
         mHandler.sendMessage(message); 
     }
 
@@ -156,6 +149,10 @@ public class UserList extends Activity {
         public String getDeviceId(){
             return SinDevice.getDeviceIdNum(UserList.this);
         }
+
+        public void prepConn(){
+            initConnThread();
+        }
 	};
     WSMsgListener mwsListener=new WSMsgListener(){
         @Override
@@ -165,7 +162,7 @@ public class UserList extends Activity {
     };
 
     public void start(){
-        Log.d("DBG","next call js start");
+        Log.d("DBG","next call js start pos");
         mWebView.loadUrl("javascript:start()");
     }
 	
@@ -310,7 +307,6 @@ public class UserList extends Activity {
             @Override
             public void onReceivedError(WebView view, int errorCode,
                     String description, String failingUrl) {
-                postGoBack();
             	Toast.makeText(getApplicationContext(), "无法连接服务器，请稍后再试。。。",
             		     Toast.LENGTH_SHORT).show();
             }
@@ -352,7 +348,6 @@ public class UserList extends Activity {
         startGps();
 
         app = (GpsApplication)this.getApplication();
-        app.initConn();
         Log.d("DBG","UserList app="+app);
         
     }
@@ -366,6 +361,27 @@ public class UserList extends Activity {
             mLocationClient.stop();
 
         super.onDestroy();
+    }
+
+    void initConnThread(){
+        new Thread(){
+            public void run(){
+                while(true){
+                    if(app.initConn()){
+                        if(app.ws.isOpened()){
+                            Log.d("DBG","initConnThread ok,next call js onWsReady");
+                            postMsg(MSG_WS_READY);
+                            break;
+                        }
+                    }
+                    try{
+                        Thread.sleep(1000);
+                    }catch(Exception e){
+                    }
+                }
+
+            }
+        }.start();
     }
 
     void openMenuAccordingUrl(){

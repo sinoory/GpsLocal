@@ -24,7 +24,7 @@
             function readFunc(){
                 dbg("ok ready A");
                 var info;
-                getIdIfNeed();
+                //getIdIfNeed();
                 if(!DBG){
                     info=window.buss.getBusInfo();
                     if(info==""){
@@ -53,6 +53,7 @@
                     oprhtml="<button id='idwatch' onclick='watch()'>watch</button>";
                 }
                 $("#idopr").html(oprhtml);
+                buss.prepConn();
             }
             function getHMS(timstap){
                 var ts=new Date(timstap);
@@ -191,6 +192,11 @@
                 }catch(e){
                     dbg("us error:"+e.name+":"+e.message);
                 }
+            }
+
+            function onWsReady(){
+                dbg("ok onWsReady");
+                getIdIfNeed();
             }
             function onWsMessage(msg){ //msg from websocket server
                 dbg("msg :"+msg);
