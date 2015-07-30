@@ -65,11 +65,26 @@
                     dbg("error:"+e.name+":"+e.message);
                 }
             }
+            function watch(){
+                if(!userId){
+                    dbg("no userId,ignore watch");
+                    return;
+                }
+                buss.sendMsg(JSON.stringify(
+                    {'type':'watchline','lineid':businfo.lineid,'watcher':userId}));
+            }
+            function reportOnline(userid){
+                buss.sendMsg(JSON.stringify({type:'online',userid:userid}));
+            }
+            var userId="";
             function getIdIfNeed(){
-                if(!jlh.getShp("id")){
+                userId=jlh.getShp("id");
+                if(!userId){
                     var devid=buss.getDeviceId();
                     dbg("no id,devid="+devid); 
                     buss.sendMsg(JSON.stringify({type:'querryid',devid:devid}));
+                }else{
+                    reportOnline(userId);
                 }
             }
             function test(){
@@ -111,13 +126,17 @@
                     for(var i=0;i<mCurrStationIndex;i++){
                         $("#idstation"+i).css("color","#6C0000");//red for passed station
                     }
-                    if(businfo.lineid){
-                      buss.sendMsg(JSON.stringify({"type":"runbus","action":"start","lineid":businfo.lineid}));
-                    }
+                    sendBusStatus({"type":"runbus","action":"start","lineid":businfo.lineid,"startInd":mCurrStationIndex});
                     $("#idstart").html("<button id='idstart' onclick='stop()'>stop</button>");
                     updateStaion();
                 }else{
                     dbg("too far from any station");
+                }
+            }
+            function sendBusStatus(jsmsg){
+                dbg("sendBusStatus businfo.lineid="+businfo.lineid);
+                if(businfo.lineid){
+                    buss.sendMsg(JSON.stringify(jsmsg));
                 }
             }
             function updateStaion(){//in station : yellow ; left staion : green , done station : red
@@ -125,13 +144,12 @@
                     return;
                 }
                 dbg("u: cur="+mCurrStationIndex+",next="+mNextSationIndex);
-                var ls=businfo.stations,dist,nextStationIndex,speedDistIndex,thisdist="";
+                var ls=businfo.stations,dist,nextStationIndex,speedDistIndex,isIn,thisdist="";
                 var tm=new Date().getTime();
                 if(mCurrStationIndex>=0){
                     thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mCurrStationIndex].la,ls[mCurrStationIndex].lo));
                     dbg("u:c: dist from cur "+ls[mCurrStationIndex].stname+" = "+thisdist);
                     //dbg(" >MIN="+(thisdist>MIN_IN_STATION_DIST)+" typeof thisdist= "+(typeof thisdist)+",typeof MIN="+(typeof MIN_IN_STATION_DIST));
-                    updateDistSpeed(mCurrStationIndex,thisdist);
                     $("#idstTm"+mCurrStationIndex).html(getHMS(tm));
                     if(thisdist>MIN_IN_STATION_DIST){//leave curr
                         $("#idstation"+mCurrStationIndex).css("color","#6C0000");//red
@@ -142,14 +160,17 @@
                         mCurrStationIndex=-1;
 
                         thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
-                        updateDistSpeed(mNextSationIndex,thisdist);
+                        updateDistSpeed(mNextSationIndex,thisdist,"next");
+                    }else{
+                        updateDistSpeed(mCurrStationIndex,thisdist,"in");
                     }
                 }else if(mNextSationIndex>0 && mNextSationIndex<ls.length){
                     thisdist=(getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
                     dbg("u:n: dist from next "+ls[mNextSationIndex].stname+" = "+thisdist+",tm="+getHMS(tm));
-                    updateDistSpeed(mNextSationIndex,thisdist);
+                    isIn=thisdist<=MIN_IN_STATION_DIST;
+                    updateDistSpeed(mNextSationIndex,thisdist,isIn?"in":"next");
                     $("#idstTm"+mNextSationIndex).html(getHMS(tm));
-                    if(thisdist<=MIN_IN_STATION_DIST){//enter next
+                    if(isIn){//enter next
                         mCurrStationIndex=mNextSationIndex;
                         mNextSationIndex++;
                         $("#idstation"+mCurrStationIndex).css("color","#D26900");//yellow
@@ -157,11 +178,11 @@
                 }
 
             }
-            function updateDistSpeed(speedDistIndex,dist){
+            function updateDistSpeed(speedDistIndex,dist,status){
                 $("#idstDist"+speedDistIndex).html("距离:"+dist);
-                if("speed" in mLatestLoc){
-                    $("#idstSpeed"+speedDistIndex).html("速度:"+mLatestLoc.speed);
-                }
+                var speed= mLatestLoc.speed || 0;
+                $("#idstSpeed"+speedDistIndex).html("速度:"+speed);
+                sendBusStatus({"type":"runbus","action":"stUpdate","lineid":businfo.lineid,"status":status,"index":speedDistIndex,"speed":speed,"dist":dist});
             }
             function onGpsPos(loc){
                 try{
@@ -172,6 +193,7 @@
                 }
             }
             function onWsMessage(msg){ //msg from websocket server
+                dbg("msg :"+msg);
                 var js=JSON.parse(msg);
                 if(js.type=="re-querryid"){
                     jlh.setShp("id",js.userid);
@@ -179,7 +201,24 @@
                     if(js.nickname){
                         jlh.setShp("nickname",js.nickname);
                     }
+                    reportOnline(js.userid);
+                }else if(js.type=='runbus'){//forward from server
+                    if(mStartBus) return ;//start by myself,so ignore server msg
+                    if(js.action=='start'){
+                        onStartLine(js);
+                    }
                 }
+            }
+            function onStartLine(jsmsg){
+                for(var i=0;i<jsmsg.startInd;i++){
+                    if(i<jsmsg.startInd)
+                        $("#idstation"+i).css("color","#6C0000");//red for passed station
+                    else if(i==jsmsg.startInd)
+                        $("#idstation"+i).css("color","#D26900");//yellow
+                    else
+                        $("#idstation"+i).css("color","#0000E3");//blue
+                }
+           
             }
             function toRad(d) {  return d * Math.PI / 180; }
             function getDisance(lat1, lng1, lat2, lng2) { //lat为纬度, lng为经度, 一定不要弄错

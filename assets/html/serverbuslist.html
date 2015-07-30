@@ -51,19 +51,16 @@
                 jh.sendMsg(JSON.stringify({"type":"delline","lineid":alllines[mLastShowOprLine].lineid}));
                 $("#idLine"+mLastShowOprLine).css("display","none");
                 $("#idopr"+mLastShowOprLine).css("display","none");
+                dbg("del "+alllines[mLastShowOprLine]+" local ownerid")
                 //mark local line for del, so local can upload again
-                var localline=jh.getShp(lines[mLastShowOprLine]);
+                var localline=jh.getShp(alllines[mLastShowOprLine].name);
+                dbg("del server line,localline="+localline);
                 if(localline){
                     var jsline=JSON.parse(localline);
                     jsline.ownerid="";
-                    jh.setShp(lines[mLastShowOprLine],JSON.stringify(jsline));
+                    jh.setShp(alllines[mLastShowOprLine].name,JSON.stringify(jsline));
+                    dbg("rm ownerid for line "+jsline.name);
                 }
-            }
-            function uploadline(){
-                var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
-                var js={"type":"uploadLine","stations":jsline.stations,
-                    "name":jsline.name,"ownerid":jh.getShp("id")};
-                jh.sendMsg(JSON.stringify(js));
             }
             function getHMS(timstap){
                 var ts=new Date(parseInt(timstap) * 1000).toLocaleString();

@@ -11,7 +11,17 @@
             function dbg(msg){
                 $("#console").html(msg+"<br>"+$("#console").html());
             }
+            function catchFuncExc(func){
+                try{
+                    func();
+                }catch(e){
+                    dbg(e);
+                }
+            }
             $(document).ready(function(){
+                catchFuncExc(ready_());
+            });
+            function ready_(){
                 dbg("ok ready sdcard");
                 lines=window.jh.getShp("alllines");
                 //dbg("lines="+lines);
@@ -22,10 +32,15 @@
                         if(!lines[i]){
                             continue;
                         }
+                        var ln=jh.getShp(lines[i]);
+                        if(!ln){
+                            continue;
+                        }
                         linehtml+="<p id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i]+"</p>";
                         linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='selectline()' >select</button>";
                         linehtml+="<button onclick='deleteline()'>deleteline</button>";
-                        var l=JSON.parse(jh.getShp(lines[i]));
+                        var l=JSON.parse(ln);
+                        dbg("line "+l.name+" ownid="+l.ownerid);
                         if(!l.ownerid){
                             linehtml+="<button onclick='uploadline()'>upload</button>";
                         }
@@ -33,7 +48,7 @@
                     }
                     $("#idlines").html(linehtml);
                 }
-            });
+            }
             var mLastShowOprLine=-1;
             function showOpr(line){
                 //dbg("showOpr line="+line+",last="+mLastShowOprLine);
