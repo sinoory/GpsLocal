@@ -1,5 +1,7 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
         <script src="../js/jquery_mini.js"></script>
     </head>
     <body>
@@ -7,6 +9,11 @@
         <div id="idStations">
         </div>
         <div id='idopr'>
+        </div>
+        <div id='chat'>
+            <div id='idmsgs'></div>
+            <input id='idmymsg' type='textarea'></input>
+            <button id='idsend' onclick='send()'>send</button>
         </div>
         <p id="console"></p>
         <script>
@@ -21,6 +28,17 @@
                     dbg("ready e="+e);
                 }
             });
+            function send(){
+                var msg=$("#idmymsg").val();
+                if(!msg) return;
+                var tm=new Date().getTime();
+                $("#idmsgs").html($("#idmsgs").html()+"<p align='right'>"+msg+"</p>");
+                var jsmsg={'type':'linechat',lineid:businfo.lineid,'from':userId,'msg':msg,'time':tm};
+                buss.sendMsg(JSON.stringify(jsmsg));
+            }
+            function onChatMsg(jsmsg){
+                $("#idmsgs").html($("#idmsgs").html()+"<p align='left'>"+jsmsg.msg+"</p>");
+            }
             function readFunc(){
                 dbg("ok ready A");
                 var info;
@@ -137,7 +155,7 @@
                     for(var i=0;i<mCurrStationIndex;i++){
                         $("#idstation"+i).css("color",RED_COLOR);//red for passed station
                     }
-                    sendBusStatus({"type":"runbus","action":"start","lineid":businfo.lineid,"startInd":mCurrStationIndex,"stationCnt":ls.length});
+                    sendBusStatus({"type":"runbus","action":"start","ownerid":userId,"lineid":businfo.lineid,"startInd":mCurrStationIndex,"stationCnt":ls.length});
                     $("#idstart").html("<button onclick='stop()'>stop</button>");
                     updateStaion();
                 }else{
@@ -145,7 +163,6 @@
                 }
             }
             function sendBusStatus(jsmsg){
-                dbg("sendBusStatus businfo.lineid="+businfo.lineid);
                 if(businfo.lineid){
                     buss.sendMsg(JSON.stringify(jsmsg));
                 }
@@ -235,6 +252,8 @@
                         //dbg("su st:"+js.status+" ["+js.index+"] d:"+js.dist+" p:"+js.speed);
                         updateServerStation(js);
                     }
+                }else if(js.type='linechat'){
+                    onChatMsg(js);
                 }
             }
             function onStartLine(jsmsg){
