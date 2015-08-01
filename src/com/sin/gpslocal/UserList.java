@@ -366,12 +366,18 @@ public class UserList extends Activity {
     void initConnThread(){
         new Thread(){
             public void run(){
+                int cnt=0;
                 while(true){
                     if(app.initConn()){
                         if(app.ws.isOpened()){
                             Log.d("DBG","initConnThread ok,next call js onWsReady");
                             postMsg(MSG_WS_READY);
                             break;
+                        }
+                        if(cnt++>5){
+                            cnt=0;
+                            Log.d("DBG","re connect after 5s");
+                            app.ws=null;
                         }
                     }
                     try{

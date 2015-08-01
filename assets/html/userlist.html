@@ -48,9 +48,9 @@
                 var oprhtml="";
                 dbg("line ownid="+businfo.ownerid+",my id="+jlh.getShp("id"));
                 if(!businfo.ownerid || businfo.ownerid==jlh.getShp("id")){
-                    oprhtml="<button id='idstart' onclick='start()'>start</button>";
+                    oprhtml="<p id='idstart' ><button onclick='start()'>start</button></p>";
                 }else{
-                    oprhtml="<button id='idwatch' onclick='watch()'>watch</button>";
+                    oprhtml="<p id='idwatch' ><button onclick='watch()'>watch</button></p>";
                 }
                 $("#idopr").html(oprhtml);
                 buss.prepConn();
@@ -58,6 +58,10 @@
             function getHMS(timstap){
                 var ts=new Date(timstap);
                 return ts.getHours()+":"+ts.getMinutes()+":"+ts.getSeconds();
+            }
+            function stop(){
+                mStartBus=false;
+                $("#idstart").html("<button onclick='start()'>start</button>");
             }
             function start(){
                 try{
@@ -73,6 +77,12 @@
                 }
                 buss.sendMsg(JSON.stringify(
                     {'type':'watchline','lineid':businfo.lineid,'watcher':userId}));
+                $("#idwatch").html("<button onclick='unwatch()'>unwatch</button>");
+            }
+            function unwatch(){
+                buss.sendMsg(JSON.stringify(
+                    {'type':'unwatchline','lineid':businfo.lineid,'watcher':userId}));
+                $("#idwatch").html("<button onclick='watch()'>watch</button>");
             }
             function reportOnline(userid){
                 buss.sendMsg(JSON.stringify({type:'online',userid:userid}));
@@ -113,22 +123,22 @@
                 for(var i=0;i<ls.length;i++){
                     var thisdist=(getDisance(mStartLoc.la,mStartLoc.lo,ls[i].la,ls[i].lo));
                     dbg("thisdist from "+ls[i].stname+"="+thisdist);
-                    $("#idstation"+i).css("color","#0000E3");//blue
+                    $("#idstation"+i).css("color",BLUE_COLOR);//blue
                     if(thisdist<dist){
                         dist=thisdist;
                         mCurrStationIndex=i;
                         mNextSationIndex=i+1;
                         mStartBus=true;
-                        $("#idstation"+mCurrStationIndex).css("color","#D26900");//yellow
+                        $("#idstation"+mCurrStationIndex).css("color",YELLOW_COLOR);//yellow
                     }
                 }
                 if(mStartBus){
                     dbg("get start station "+ls[mCurrStationIndex].stname);
                     for(var i=0;i<mCurrStationIndex;i++){
-                        $("#idstation"+i).css("color","#6C0000");//red for passed station
+                        $("#idstation"+i).css("color",RED_COLOR);//red for passed station
                     }
-                    sendBusStatus({"type":"runbus","action":"start","lineid":businfo.lineid,"startInd":mCurrStationIndex});
-                    $("#idstart").html("<button id='idstart' onclick='stop()'>stop</button>");
+                    sendBusStatus({"type":"runbus","action":"start","lineid":businfo.lineid,"startInd":mCurrStationIndex,"stationCnt":ls.length});
+                    $("#idstart").html("<button onclick='stop()'>stop</button>");
                     updateStaion();
                 }else{
                     dbg("too far from any station");
@@ -140,6 +150,9 @@
                     buss.sendMsg(JSON.stringify(jsmsg));
                 }
             }
+            var RED_COLOR="#6C0000";
+            var BLUE_COLOR="#0000E3";
+            var YELLOW_COLOR="#D26900";
             function updateStaion(){//in station : yellow ; left staion : green , done station : red
                 if(!mStartBus){
                     return;
@@ -153,7 +166,7 @@
                     //dbg(" >MIN="+(thisdist>MIN_IN_STATION_DIST)+" typeof thisdist= "+(typeof thisdist)+",typeof MIN="+(typeof MIN_IN_STATION_DIST));
                     $("#idstTm"+mCurrStationIndex).html(getHMS(tm));
                     if(thisdist>MIN_IN_STATION_DIST){//leave curr
-                        $("#idstation"+mCurrStationIndex).css("color","#6C0000");//red
+                        $("#idstation"+mCurrStationIndex).css("color",RED_COLOR);//red
                         ls[mCurrStationIndex].leaveTm=tm;
                         $("#idstSpeed"+mCurrStationIndex).html("");
                         $("#idstDist"+mCurrStationIndex).html("");
@@ -174,9 +187,16 @@
                     if(isIn){//enter next
                         mCurrStationIndex=mNextSationIndex;
                         mNextSationIndex++;
-                        $("#idstation"+mCurrStationIndex).css("color","#D26900");//yellow
+                        $("#idstation"+mCurrStationIndex).css("color",YELLOW_COLOR);//yellow
                     }
                 }
+
+            }
+            function updateServerStation(js){
+                var cl=js.status=="in"?YELLOW_COLOR:(js.status=="next"?BLUE_COLOR:RED_COLOR);
+                $("#idstation"+js.index).css("color",cl);
+                $("#idstDist"+js.index).html("距离:"+js.dist);
+                $("#idstSpeed"+js.index).html("速度:"+js.speed);
 
             }
             function updateDistSpeed(speedDistIndex,dist,status){
@@ -199,7 +219,6 @@
                 getIdIfNeed();
             }
             function onWsMessage(msg){ //msg from websocket server
-                dbg("msg :"+msg);
                 var js=JSON.parse(msg);
                 if(js.type=="re-querryid"){
                     jlh.setShp("id",js.userid);
@@ -212,17 +231,20 @@
                     if(mStartBus) return ;//start by myself,so ignore server msg
                     if(js.action=='start'){
                         onStartLine(js);
+                    }else if(js.action=='stUpdate'){
+                        //dbg("su st:"+js.status+" ["+js.index+"] d:"+js.dist+" p:"+js.speed);
+                        updateServerStation(js);
                     }
                 }
             }
             function onStartLine(jsmsg){
                 for(var i=0;i<jsmsg.startInd;i++){
                     if(i<jsmsg.startInd)
-                        $("#idstation"+i).css("color","#6C0000");//red for passed station
+                        $("#idstation"+i).css("color",RED_COLOR);//red for passed station
                     else if(i==jsmsg.startInd)
-                        $("#idstation"+i).css("color","#D26900");//yellow
+                        $("#idstation"+i).css("color",YELLOW_COLOR);//yellow
                     else
-                        $("#idstation"+i).css("color","#0000E3");//blue
+                        $("#idstation"+i).css("color",BLUE_COLOR);//blue
                 }
            
             }
