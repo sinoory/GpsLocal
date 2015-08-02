@@ -3,22 +3,32 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
         <script src="../js/jquery_mini.js"></script>
+        <style type="text/css">
+            #idStations p {margin:0px;font-size:20px;padding:5px;}
+            .msgMe {background:#5A5AAD;}
+            .msgOther {background:#D8D8EB;}
+        </style>
     </head>
-    <body>
-        <h3 id="idBusname" align="center" >Welcome</h3>
-        <div id="idStations">
+    <body style="margin:0px">
+        <table  style="width:100%;background:#B15BFF;table-layout:fixed">
+            <tr>
+                <td></td>
+                <td><h3 id="idBusname" align=center style="padding:16px;margin:0px;" >Welcome</h3></td>
+                <td><div id='idopr' align=right></div></td>
+            </tr>
+        </table>
+        <div id="idStations" style="background:#d0d0d0">
         </div>
-        <div id='idopr'>
-        </div>
-        <div id='chat'>
-            <div id='idmsgs'></div>
+        <div id='chat' style="display:none">
+            <div id='idmsgs' style="height:150px;border:1px solid #F00;overflow-y:scroll;">
+            </div>
             <input id='idmymsg' type='textarea'></input>
             <button id='idsend' onclick='send()'>send</button>
         </div>
         <p id="console"></p>
         <script>
             function dbg(msg){
-                $("#console").html(msg+"<br>"+$("#console").html());
+                //$("#console").html(msg+"<br>"+$("#console").html());
             }
             var DBG=false;
             $(document).ready(function(){
@@ -32,12 +42,12 @@
                 var msg=$("#idmymsg").val();
                 if(!msg) return;
                 var tm=new Date().getTime();
-                $("#idmsgs").html($("#idmsgs").html()+"<p align='right'>"+msg+"</p>");
+                $("#idmsgs").html($("#idmsgs").html()+"<div class='msgMe'><span>"+userId+"</span><p>"+msg+"<p></div>");
                 var jsmsg={'type':'linechat',lineid:businfo.lineid,'from':userId,'msg':msg,'time':tm};
                 buss.sendMsg(JSON.stringify(jsmsg));
             }
             function onChatMsg(jsmsg){
-                $("#idmsgs").html($("#idmsgs").html()+"<p align='left'>"+jsmsg.msg+"</p>");
+                $("#idmsgs").html($("#idmsgs").html()+"<div class='msgOther'><span>"+jsmsg.from+"</span><p>"+jsmsg.msg+"</p></div>");
             }
             function readFunc(){
                 dbg("ok ready A");
@@ -233,6 +243,7 @@
 
             function onWsReady(){
                 dbg("ok onWsReady");
+                $("#chat").css("display","block");
                 getIdIfNeed();
             }
             function onWsMessage(msg){ //msg from websocket server
