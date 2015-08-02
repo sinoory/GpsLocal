@@ -6,4 +6,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="Commons.Ok">OK</string>
     <string name="Commons.Cancel">Cancel</string>
+    <string name="menuLocalline">LocalLine</string>
+    <string name="menuServerLine">ServerLine</string>
+    <string name="menuMap">Map</string>
+    <string name="menuExit">Exit</string>
 </resources>

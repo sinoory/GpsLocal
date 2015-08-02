@@ -49,6 +49,11 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.greendroid.QuickAction;
+import com.greendroid.QuickActionGrid;
+import com.greendroid.QuickActionWidget;
+import com.greendroid.QuickActionWidget.OnQuickActionClickListener;
+
 import com.sin.baidu.GpsApplication;
 import com.sin.baidu.LocationOverlayDemo;
 import com.sin.pub.IGridMenuDialog;
@@ -130,6 +135,40 @@ public class UserList extends Activity {
     }
 
 	BusMenuDlg mMenu;
+    QuickActionGrid mBusMenu=null;
+    void buildMenuDialog() {
+        mBusMenu = new QuickActionGrid(this);
+        mBusMenu.addQuickAction(new QuickAction(this, R.drawable.setting,R.string.menuLocalline));
+        mBusMenu.addQuickAction(new QuickAction(this, R.drawable.setting,R.string.menuServerLine));
+        mBusMenu.addQuickAction(new QuickAction(this, R.drawable.setting, R.string.menuMap));
+        mBusMenu.addQuickAction(new QuickAction(this, R.drawable.setting, R.string.menuExit));
+        
+        mBusMenu.setOnQuickActionClickListener(new OnQuickActionClickListener() {           
+            @Override 
+            public void onQuickActionClicked(QuickActionWidget widget, int position) { 
+                Intent intent = new Intent();
+                switch (position) {
+                    case 0:
+                        intent.setClass(UserList.this, BusList.class);
+                        UserList.this.startActivity(intent);
+                        break;
+                    case 1:
+                        intent.setClass(UserList.this, ServerBusList.class);
+                        UserList.this.startActivity(intent);
+                        break;
+                    case 2:
+                        intent.setClass(UserList.this, LocationOverlayDemo.class);
+                        UserList.this.startActivity(intent);
+                        break;
+                    case 3:
+                        finish();
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        break;
+                }
+            }
+        });
+
+    }
 	class BusServer_{
         public String getBusInfo(){
             String linename=sp.getString("lastLine","");
@@ -232,7 +271,8 @@ public class UserList extends Activity {
         mImgMenu=(ImageView)findViewById(R.id.BubbleRightView);
         mImgMenu.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                openMenuAccordingUrl();
+                //openMenuAccordingUrl();
+                mBusMenu.show(v);
             }
         });
 
@@ -349,6 +389,7 @@ public class UserList extends Activity {
 
         app = (GpsApplication)this.getApplication();
         Log.d("DBG","UserList app="+app);
+        buildMenuDialog();
         
     }
     GpsApplication app = null;
