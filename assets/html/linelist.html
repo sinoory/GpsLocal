@@ -1,10 +1,22 @@
 <html>
     <head>
         <script src="../js/jquery_mini.js"></script>
+        <link rel="stylesheet" type="text/css" href="../css/general.css">
+        <style type="text/css">
+            #idlines p {background:#d0d0d0;}
+            #idlines p:active {background:#dd0000;}
+        </style>
     </head>
-    <body>
-        <h3 id="idBusname" align="center" >Lines</h3>
-        <div id="idlines">
+    <body style="margin:0px">
+        <table  class="titleTableHead" >
+            <tr>
+                <td></td>
+                <td><h3 id="idBusname" align=center style="padding:16px;margin:0px;" >Lines</h3></td>
+                <td><div id='idopr' align=right></div></td>
+            </tr>
+        </table>
+
+        <div id="idlines" style="background:#d0d0d0">
         </div>
         <p id="console"></p>
         <script>

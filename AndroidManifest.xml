@@ -73,8 +73,7 @@
 
          <activity
             android:name="com.sin.gpslocal.UserList"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="sensor" >
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -93,8 +92,7 @@
      
         <activity
             android:name="com.sin.gpslocal.LocalList"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="sensor" >
+            >
         </activity>
 
         <activity android:name="com.sintech.RunningBus" ></activity>

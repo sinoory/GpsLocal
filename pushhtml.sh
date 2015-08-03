@@ -12,5 +12,7 @@ adb $devs push assets/html/userlist.html /sdcard/sin/gps/html/
 adb $devs push assets/html/linelist.html /sdcard/sin/gps/html/
 adb $devs push assets/html/serverbuslist.html /sdcard/sin/gps/html/
 
+adb $devs push assets/css/general.css /sdcard/sin/gps/css/
+
 adb $devs push assets/js/jquery_mini.js /sdcard/sin/gps/js/
 
