@@ -374,6 +374,7 @@ public class UserList extends Activity {
         int fromsdcard=AndFileUty.isExist(this,"/sin/gps/html/","userlist.html");
         if(fromsdcard==0){
         	//SCRIPT_MARK.d(TAG,"Load from sdcard");
+            fromSd=true;
         	mWebView.loadUrl("file:///sdcard/sin/gps/html/userlist.html");
         }else{
         	//SCRIPT_MARK.d(TAG,"Load from assert,"+fromsdcard);
@@ -392,6 +393,14 @@ public class UserList extends Activity {
         buildMenuDialog();
         
     }
+    void loadMainHtml(){
+        if(fromSd){
+        	mWebView.loadUrl("file:///sdcard/sin/gps/html/userlist.html");
+        }else{
+        	mWebView.loadUrl("file:///android_asset/html/userlist.html");
+        }
+    }
+    boolean fromSd=false;
     GpsApplication app = null;
 
     @Override
@@ -436,6 +445,9 @@ public class UserList extends Activity {
     }
     @Override
     protected void onResume() {
+        if(sp.getString("selectlineChanged","false").equals("true")){
+            loadMainHtml();
+        }
         app.registerListener(mwsListener);
     	super.onResume();
     }

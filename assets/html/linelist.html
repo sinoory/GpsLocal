@@ -3,8 +3,10 @@
         <script src="../js/jquery_mini.js"></script>
         <link rel="stylesheet" type="text/css" href="../css/general.css">
         <style type="text/css">
-            #idlines p {background:#d0d0d0;}
-            #idlines p:active {background:#dd0000;}
+            #idlines a {background:#d0d0d0;font-size:larger;}
+            #idlines a:active {background:#dd0000;}
+            .selectedLine {color:#0000ff}
+            .unselectedLine {color:#000000}
         </style>
     </head>
     <body style="margin:0px">
@@ -48,7 +50,7 @@
                         if(!ln){
                             continue;
                         }
-                        linehtml+="<p id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i]+"</p>";
+                        linehtml+="<p><a id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i]+"</a></p>";
                         linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='selectline()' >select</button>";
                         linehtml+="<button onclick='deleteline()'>deleteline</button>";
                         var l=JSON.parse(ln);
@@ -70,8 +72,15 @@
                 mLastShowOprLine=line;
                 $("#idopr"+mLastShowOprLine).css("display","block");
             }
+            var mLastSelect=-1;
             function selectline(){
+                jh.setShp("selectlineChanged","true");
                 window.jh.setShp("lastLine",lines[mLastShowOprLine]);
+                $("#idLine"+mLastShowOprLine).attr("class","selectedLine");
+                if(mLastSelect!=-1){
+                    $("#idLine"+mLastSelect).attr("class","unselectedLine");
+                }
+                mLastSelect=mLastShowOprLine;
             }
             function deleteline(){
                 window.jh.rmShp(lines[mLastShowOprLine]);
