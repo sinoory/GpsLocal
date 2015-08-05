@@ -233,7 +233,6 @@ public class MenuDlg extends IGridMenuDialog {
 	}
 
     public void onExit(){
-        ws.close();
     }
 
 class MyOverlay extends ItemizedOverlay{

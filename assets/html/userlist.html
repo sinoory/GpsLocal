@@ -56,6 +56,7 @@
                 dbg("ok ready A");
                 var info;
                 //getIdIfNeed();
+                buss.prepConn();
                 if(!DBG){
                     info=window.buss.getBusInfo();
                     if(info==""){
@@ -85,7 +86,6 @@
 
                 }
                 $("#idopr").html(oprhtml);
-                buss.prepConn();
             }
             function getHMS(timstap){
                 var ts=new Date(timstap);

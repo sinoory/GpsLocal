@@ -105,6 +105,7 @@
                 window.jh.rmShp(lines[mLastShowOprLine]);
                 lines.splice(mLastShowOprLine,1);
                 window.jh.setShp("alllines",lines.join(","));
+                jh.setShp("lastLine","");
                 $("#idLine"+mLastShowOprLine).css("display","none");
                 $("#idopr"+mLastShowOprLine).css("display","none");
             }

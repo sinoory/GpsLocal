@@ -50,7 +50,7 @@ public class GpsApplication extends Application {
     public boolean initConn(){
         synchronized(this){
             if(ws!=null){
-                Log.d("DBG","App initConn ws inited ,ignore");
+                Log.d("DBG","App initConn ws inited,ws="+ws+" ,ignore");
                 return true;
             }
             try {
