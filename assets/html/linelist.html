@@ -5,8 +5,14 @@
         <style type="text/css">
             #idlines a {background:#d0d0d0;font-size:larger;}
             #idlines a:active {background:#dd0000;}
-            .selectedLine {color:#0000ff}
-            .unselectedLine {color:#000000}
+            .selectedLine {color:#0000ff;}
+            .unselectedLine {color:#000000;}
+            .uploadingBtn {color:#0000ff;}
+
+
+            .linkbutton   {background-color: #990000;border:#ffff00 1px solid;color: #ffff00; text-decoration: none;}
+            .linkbutton a:hover {background-color: #c8d8f0;border:#ffff00 1px solid;color: #ffff00; text-decoration: none;}
+
         </style>
     </head>
     <body style="margin:0px">
@@ -20,6 +26,7 @@
 
         <div id="idlines" style="background:#d0d0d0">
         </div>
+        <button id='idbtntst' onclick='test()'>testbutton</button>
         <p id="console"></p>
         <script>
             function dbg(msg){
@@ -35,9 +42,14 @@
             $(document).ready(function(){
                 catchFuncExc(ready_());
             });
+            var DBG=false;
             function ready_(){
                 dbg("ok ready sdcard");
-                lines=window.jh.getShp("alllines");
+                if(DBG){
+                    lines="aaaaaaa,bbbbbbbbb,ccccccccccc,dddddddddd,eeeeeeeeee,fffffffffff";
+                }else{
+                    lines=window.jh.getShp("alllines");
+                }
                 //dbg("lines="+lines);
                 if(lines){
                     lines=lines.split(",");
@@ -46,17 +58,24 @@
                         if(!lines[i]){
                             continue;
                         }
+                        linehtml+="<p><a id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i]+"</a></p>";
+                        linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='selectline()' >select</button>";
+                        linehtml+="<button onclick='deleteline()' id='iddel"+i+"'>deleteline</button>";
+
+                        if(DBG){
+                            linehtml+="<button id='idup"+i+"' onclick='uploadline()'>upload</button>";
+                            linehtml+="</p>";
+                            continue;
+                        }
                         var ln=jh.getShp(lines[i]);
                         if(!ln){
                             continue;
                         }
-                        linehtml+="<p><a id='idLine"+i+"' onclick='showOpr("+i+")'>"+lines[i]+"</a></p>";
-                        linehtml+="<p align='right' id='idopr"+i+"' style='display:none'  ><button onclick='selectline()' >select</button>";
-                        linehtml+="<button onclick='deleteline()'>deleteline</button>";
+
                         var l=JSON.parse(ln);
                         dbg("line "+l.name+" ownid="+l.ownerid);
                         if(!l.ownerid){
-                            linehtml+="<button onclick='uploadline()'>upload</button>";
+                            linehtml+="<button id='idup"+i+"' onclick='uploadline()'>upload</button>";
                         }
                         linehtml+="</p>";
                     }
@@ -92,9 +111,33 @@
             function uploadline(){
                 var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
                 var js={"type":"uploadLine","stations":jsline.stations,
-                    "name":jsline.name,"ownerid":jh.getShp("id")};
+                    "name":jsline.name,"ownerid":jh.getShp("id"),"lver":jsline.lver};
                 jh.sendMsg(JSON.stringify(js));
+                //TODO: disable all oprate
+                $("#idup"+mLastShowOprLine).css("color","#ff0000");
+                $("#idup"+mLastShowOprLine).text($("#idup"+mLastShowOprLine).text()+"...");
             }
+            function test(){
+                $("#idtest").css("color","#ff0000");
+                var bt=$("#idup"+mLastShowOprLine);
+                dbg("test bt #idup"+mLastShowOprLine+"="+bt);
+                $("#iddel"+mLastShowOprLine).css("color","#ff0000");
+                $("#idup"+mLastShowOprLine).css("color","#ff0000");
+                $("#idup"+mLastShowOprLine).text($("#idup"+mLastShowOprLine).text()+"...");
+                $("#idup"+mLastShowOprLine).css("display","none");
+            }
+            function onWsMessage(msg){ //msg from websocket server
+                var js=JSON.parse(msg);
+                if(js.type=="re-uploadLine"){
+                    dbg("recv server");
+                    var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
+                    jsline.linechanged=false;
+                    jsline.ownerid=jh.getShp("id");
+                    jh.setShp(lines[mLastShowOprLine],JSON.stringify(jsline));
+                    $("#idup"+mLastShowOprLine).css("display","none");
+                }
+            }
+
             function getHMS(timstap){
                 var ts=new Date(parseInt(timstap) * 1000).toLocaleString();
                 return ts.split(" ")[4];

@@ -36,10 +36,12 @@ public class MJson{
     public static void addStation(Context ctx,String linename,String stationname,
             boolean direct,String location,int index){
         SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(ctx);
-        String line=sp.getString(linename,"{'name':'"+linename+"','stations':[],'stationDn':[]}");
+        String line=sp.getString(linename,"{'name':'"+linename+"','stations':[],'stationDn':[],'lver':0,'linechanged':false}");
         Log.d("DBG","addStation line="+line);
         try{
             JSONObject jsonObject = new JSONObject(line);
+            int lineversion=jsonObject.getInt("lver");
+            boolean linechanged=jsonObject.getBoolean("linechanged");
             String stationtype=direct?"stations":"stationDn";
             JSONArray array=jsonObject.getJSONArray(stationtype);
             JSONObject eleStation=new JSONObject();
@@ -47,10 +49,13 @@ public class MJson{
             eleStation.put("lo",location.split(":")[0]);
             eleStation.put("la",location.split(":")[1]);
             insertJSONArrayElem(jsonObject,stationtype,array,index,eleStation);
+            jsonObject.put("lver", lineversion+1);
+            jsonObject.put("linechanged", true);
             Log.d("DBG","addStation newline="+jsonObject.toString());
             sp.edit()
                 .putString(linename,jsonObject.toString())
                 .putString("lastLine",linename)
+                .putString("selectlineChanged","true")
                 .commit();
         }catch(Exception e){
         }

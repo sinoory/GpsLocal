@@ -50,6 +50,7 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.sin.baidu.GpsApplication;
+import com.sin.pub.IWebSocket.WSMsgListener;
 import com.sin.pub.JsLocalHander;
 import com.sin.pub.file.AndFileUty;
 import com.sintech.UserMenuDlg;
@@ -248,6 +249,14 @@ public class BusList extends Activity {
         
         
     }
+
+    WSMsgListener mwsListener=new WSMsgListener(){
+        @Override
+        public void onMessage(String message) {
+            mWebView.loadUrl("javascript:onWsMessage('"+message+"')");
+        }
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -259,7 +268,16 @@ public class BusList extends Activity {
     @Override
     protected void onResume() {
     	super.onResume();
+        ((GpsApplication)this.getApplication()).registerListener(mwsListener);
     }
+
+    @Override
+    protected void onPause() {
+        ((GpsApplication)this.getApplication()).removeListener(mwsListener);
+    	super.onPause();
+    }
+
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
     	//SCRIPT_MARK.d(TAG,"onKeyDown keyCode="+keyCode);
