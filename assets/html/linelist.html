@@ -51,6 +51,7 @@
                     lines=window.jh.getShp("alllines");
                 }
                 //dbg("lines="+lines);
+                mId=jh.getShp("id");
                 if(lines){
                     lines=lines.split(",");
                     var linehtml="";
@@ -76,6 +77,8 @@
                         dbg("line "+l.name+" ownid="+l.ownerid);
                         if(!l.ownerid){
                             linehtml+="<button id='idup"+i+"' onclick='uploadline()'>upload</button>";
+                        }else if(l.linechanged && l.ownerid==mId){
+                            linehtml+="<button id='idup"+i+"' onclick='up2svr()'>updateServer</button>";
                         }
                         linehtml+="</p>";
                     }
@@ -112,12 +115,22 @@
             function uploadline(){
                 var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
                 var js={"type":"uploadLine","stations":jsline.stations,
-                    "name":jsline.name,"ownerid":jh.getShp("id"),"lver":jsline.lver};
+                    "name":jsline.name,"ownerid":jh.getShp("id"),"lver":jsline.lver,exist:false};
                 jh.sendMsg(JSON.stringify(js));
                 //TODO: disable all oprate
                 $("#idup"+mLastShowOprLine).css("color","#ff0000");
                 $("#idup"+mLastShowOprLine).text($("#idup"+mLastShowOprLine).text()+"...");
             }
+            function up2svr(){
+                var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
+                var js={"type":"uploadLine","stations":jsline.stations,"lineid":jsline.lineid,
+                    "name":jsline.name,"ownerid":jh.getShp("id"),"lver":jsline.lver,exist:true};
+                jh.sendMsg(JSON.stringify(js));
+                //TODO: disable all oprate
+                $("#idup"+mLastShowOprLine).css("color","#ff0000");
+                $("#idup"+mLastShowOprLine).text($("#idup"+mLastShowOprLine).text()+"...");
+            }
+
             function test(){
                 $("#idtest").css("color","#ff0000");
                 var bt=$("#idup"+mLastShowOprLine);
@@ -130,10 +143,15 @@
             function onWsMessage(msg){ //msg from websocket server
                 var js=JSON.parse(msg);
                 if(js.type=="re-uploadLine"){
-                    dbg("recv server");
+                    dbg("recv server,err=",msg.err);
                     var jsline=JSON.parse(jh.getShp(lines[mLastShowOprLine]));
                     jsline.linechanged=false;
-                    jsline.ownerid=jh.getShp("id");
+                    if(js.subtype=="upload"){
+                        dbg("svr upload "+lines[mLastShowOprLine]+" ,id="+jh.getShp("id"));
+                        jsline.ownerid=jh.getShp("id");
+                        jsline.lineid=js.lineid;
+                    }else{//update
+                    }
                     jh.setShp(lines[mLastShowOprLine],JSON.stringify(jsline));
                     $("#idup"+mLastShowOprLine).css("display","none");
                 }

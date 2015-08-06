@@ -447,6 +447,7 @@ public class UserList extends Activity {
     protected void onResume() {
         if(sp.getString("selectlineChanged","false").equals("true")){
             loadMainHtml();
+            sp.edit().putString("selectlineChanged","false").commit();
         }
         app.registerListener(mwsListener);
     	super.onResume();
