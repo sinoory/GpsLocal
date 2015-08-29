@@ -26,11 +26,11 @@
 
         <div id="idlines" style="background:#d0d0d0">
         </div>
-        <button id='idbtntst' onclick='test()'>testbutton</button>
+        <button id='idbtntst' onclick='test()' style="display:none">testbutton</button>
         <p id="console"></p>
         <script>
             function dbg(msg){
-                $("#console").html(msg+"<br>"+$("#console").html());
+                //$("#console").html(msg+"<br>"+$("#console").html());
             }
             function catchFuncExc(func){
                 try{

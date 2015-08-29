@@ -1,11 +1,22 @@
 <html>
     <head>
         <script src="../js/jquery_mini.js"></script>
+        <link rel="stylesheet" type="text/css" href="../css/general.css">
     </head>
-    <body>
-        <h3 id="idBusname" align="center" >Server Lines</h3>
-        <div id="idlines">
+    <body style="margin:0px">
+        <table  class="titleTableHead" >
+            <tr>
+                <td></td>
+                <td><h3 id="idBusname" align=center style="padding:16px;margin:0px;" >Server Lines</h3></td>
+                <td><div id='idopr' align=right></div></td>
+            </tr>
+        </table>
+
+
+        <div id="idlines" style="background:#d0d0d0">
         </div>
+        <a href="prjsrc/examples/tabs/index.html">tab</a>
+        <a href="prjsrc/examples/list/index.html">list</a>
         <p id="console"></p>
         <script>
             function dbg(msg){
