@@ -1,0 +1,109 @@
+Ext.application({
+    name: 'Sencha',
+
+    launch: function() {
+
+        Ext.define('Sin.ChatBabble',{
+            extend: 'Ext.dataview.component.DataItem',
+            extend: 'Ext.Label',
+            xtype:'sinChatBabble',
+            config:{
+                left : "30%", //work
+                style : "background-color:yellow;border-style: solid;border-radius: 5px",//work
+                html: 'My label kk!ooooooo<br>sinChatBabble',
+                border:"2px",
+                styleHtmlContent:false,//work
+                fullscreen:true
+            }
+        });
+
+        Ext.define('MyListItem', {
+            extend: 'Ext.dataview.component.DataItem',
+            requires: ['Ext.Label'],
+            //requires: ['Ext.Button'],
+            xtype: 'mylistitem',
+
+            config: {
+                style : "left:30%;background-color:yellow;border-style: solid;border-radius: 5px",//work
+                html: 'My label kk!ooooooo<br>sinChatBabble',
+                border:"2px",
+                styleHtmlContent:false,//work
+
+            /*
+                nameButton: true,
+
+                dataMap: {
+                    getNameButton: {
+                        setText: 'name'
+                    }
+                }
+                */
+            },
+
+            applyNameButton: function(config) {
+                return Ext.factory(config, Ext.Label);
+            },
+
+            updateNameButton: function(newNameButton, oldNameButton) {
+                if (oldNameButton) {
+                    this.remove(oldNameButton);
+                }
+
+                if (newNameButton) {
+                    // add an event listeners for the `tap` event onto the new button, and
+                    // tell it to call the onNameButtonTap method
+                    // when it happens
+                    newNameButton.on('tap', this.onNameButtonTap, this);
+
+                    this.add(newNameButton);
+                }
+            },
+
+            onNameButtonTap: function(button, e) {
+                var record = this.getRecord();
+
+                Ext.Msg.alert(
+                    record.get('name'), // the title of the alert
+                    "The age of this person is: " + record.get('age') 
+                    // the message of the alert
+                );
+            }
+        });
+        Ext.create('Ext.DataView', {
+            fullscreen: true,
+
+            store: {
+                fields: ['name', 'age'],
+                data: [
+                    {name: 'Greg',  age: 100},
+                    {name: 'Brandon',   age: 21},
+                    {name: 'Scott',   age: 21},
+                    {name: 'Gary', age: 24},
+                    {name: 'Fred', age: 24},
+                    {name: 'Seth',   age: 26},
+                    {name: 'Kevin',   age: 26},
+                    {name: 'Israel',   age: 26},
+                    {name: 'Mitch', age: 26}
+                ]
+            },
+
+            useComponents: true,
+            defaultType: 'mylistitem'
+            //defaultType: 'sinChatBabble'
+        });
+
+/*
+    Ext.Viewport.add({
+        xtype: 'label',
+        left : "30%", //work
+        style : "background-color:yellow;border-style: solid;border-radius: 5px",//work
+        html: 'My label kk!ooooooo<br>asdkaf',
+        border:"2px",
+        styleHtmlContent:false,//work
+        fullscreen:true
+    });
+
+        var bb=Ext.create('Sin.ChatBabble',{html:"asdfa"});
+*/
+    }
+});

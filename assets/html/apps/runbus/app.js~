@@ -1,0 +1,22 @@
+Ext.application({
+    name: 'Sencha',
+
+    launch: function() {   
+
+        Ext.define('Sin.ChatBabble',{
+            extend: 'Ext.Label',
+            xtype:'sinChatBabble',
+            config:{
+                left : "10%", //work
+                style : "background-color:yellow;border-style: solid;border-radius: 5px",//work
+                html: 'My label kk!ooooooo<br>sinChatBabble',
+                border:"2px",
+                //styleHtmlContent:false,//work
+            }
+        });
+
+
+
+        Ext.create('Sin.ChatBabble');
+    }
+});
