@@ -1,16 +1,32 @@
 Ext.application({
     name: 'Sencha',
-    requires:['Ext.draw.Component'],
 
     launch: function() {   
-        var component = Ext.create('Ext.draw.Component',{
-        items: [{
-            type: 'path',
-            path: 'M75,75 c0,-25 50,25 50,0 c0,-25 -50,25 -50,0',
-            fillStyle: 'blue'
-          }]
+        var mainui=Ext.create('Ext.Container', {
+            fullscreen: true,
+            layout: 'vbox',
+            html:"canvase<canvas id='canv0"+"' style='width:20px;height:20px'></canvas>",
         });
-        Ext.Viewport.setLayout('fit');
-        Ext.Viewport.add(component);
+
+        var canvas = document.getElementById('canv0');
+        var context = canvas.getContext("2d");
+        var cw = canvas.width;
+        var ch = canvas.height;
+
+        console.log(cw,ch);
+        context.lineWidth = 30;
+        context.strokeStyle = 'red';
+        context.moveTo(0,0);
+        context.lineTo(300,150);
+        context.stroke();
+
+        context.moveTo(150,0);
+        context.lineTo(150,150);
+        context.stroke();
+
+        context.moveTo(300,0);
+        context.lineTo(0,150);
+        context.stroke();
+
     }
 });

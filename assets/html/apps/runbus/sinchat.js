@@ -4,7 +4,7 @@ Ext.define('Sin.ChatBabble',{
     config:{
         //right : "10%", //work
         //left : "2%", //work
-        style : "background-color:yellow;border-style: solid;border-radius: 5px",//work
+        style : "background-color:#9393FF;border-style: solid;border-radius: 5px",//work
         html: 'My label kk!ooooooo<br>sinChatBabble',
         border:"2px",
         me:false, //true if this message is send from local , else from other people
@@ -14,7 +14,7 @@ Ext.define('Sin.ChatBabble',{
         this.callParent(arguments);
         this.element.on('tap',this.onTap,this);
         if(this.getMe()){
-            this.element.setStyle("background-color","red");
+            this.element.setStyle("background-color","#28FF28");
         }
     },
     onTap:function(){
@@ -37,12 +37,15 @@ Ext.define('Sin.ChatItem',{
     },
     constructor:function(){
         this.callParent(arguments);
+        var img = Ext.create('Ext.Img', {src:'imgs/user.png',width:20,height:20});
         if(this.getMe()){
+            this.add(img);
             this.add(Ext.create('Ext.Label',{html:this.getWho()}));
             this.add(Ext.create('Sin.ChatBabble',{html:this.getMsg(),me:true}));
         }else{
             this.add(Ext.create('Sin.ChatBabble',{html:this.getMsg()}));
             this.add(Ext.create('Ext.Label',{html:this.getWho()}));
+            this.add(img);
         }
     }
 });
