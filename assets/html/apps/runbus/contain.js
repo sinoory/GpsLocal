@@ -8,11 +8,7 @@ Ext.application({
             style : "border-style: solid;border-radius: 1px",
                 items: [
                     {xtype: 'textfield',name : 'name',flex:5},
-                    {xtype:'button',html:'Send',ui: 'action',flex:1,
-                        handler: function() {
-                            chartroot.add(Ext.create('Sin.ChatItem',{who:'who',msg:'this real msg'}));
-                        },
-                    },
+                    {xtype:'button',html:'Send',ui: 'action',flex:1,id:'idsend',},
                 ],    
             });
 
@@ -34,12 +30,7 @@ Ext.application({
                 {
                     xtype: 'titlebar',title: 'bus infomations',titleAlign:'left',
                     items:[
-                        {xtype:'button',html:'-',ui:'action',align:'right',
-                            handler: function() {
-                                busroot.hide=!busroot.hide;
-                                busroot.setHidden(busroot.hide);
-                            },
-                        },
+                        {xtype:'button',html:'-',ui:'action',align:'right',id:'idshowbus',},
                     ],
                 },
                 {

@@ -1,29 +1,28 @@
 Ext.define('RunBus.controller.TestMain', {
     extend: 'Ext.app.Controller',
 
-    config: {
-        refs: {
-            loginForm: 'formpanel'
-        },
-        control: {
-            'formpanel button': {
-                tap: 'doLogin'
-            }
-        }
+    showHideBus: function() {
+        busroot.hide=!busroot.hide;
+        busroot.setHidden(busroot.hide);
+    },
+    sendMsg:function(){
+        chartroot.add(Ext.create('Sin.ChatItem',{who:'who',msg:'this real msg'}));
+        chartroot.getScrollable().getScroller().scrollToEnd();
     },
 
-    doLogin: function() {
-        var form   = this.getLoginForm(),
-            values = form.getValues();
-
-        MyApp.authenticate(values);
+    initEvn:function(){
+        showhidebtn=Ext.ComponentQuery.query("#idshowbus")[0];
+        showhidebtn.on('tap',this.showHideBus);
+        sendbtn=Ext.ComponentQuery.query("#idsend")[0];
+        sendbtn.on('tap',this.sendMsg);
     },
 
     launch: function() {   
         chartroot=Ext.ComponentQuery.query("#idchat")[0];
         busroot=Ext.ComponentQuery.query("#idbus")[0];
         mainui=Ext.ComponentQuery.query("#idmain")[0];
-        this.testui();
+        this.initEvn();
+        //this.testui();
     },
     testui:function(){
         chartroot.add(Ext.create('Sin.ChatItem',{who:'who',msg:'this real msg'}));
