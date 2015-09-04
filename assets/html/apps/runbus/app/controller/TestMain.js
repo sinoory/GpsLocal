@@ -1,29 +1,34 @@
 Ext.define('RunBus.controller.TestMain', {
-    extend: 'Ext.app.Controller',
+    extend: 'RunBus.controller.MainControl',
 
-    showHideBus: function() {
-        busroot.hide=!busroot.hide;
-        busroot.setHidden(busroot.hide);
-    },
-    sendMsg:function(){
-        chartroot.add(Ext.create('Sin.ChatItem',{who:'who',msg:'this real msg'}));
-        chartroot.getScrollable().getScroller().scrollToEnd();
-    },
-
-    initEvn:function(){
-        showhidebtn=Ext.ComponentQuery.query("#idshowbus")[0];
-        showhidebtn.on('tap',this.showHideBus);
-        sendbtn=Ext.ComponentQuery.query("#idsend")[0];
-        sendbtn.on('tap',this.sendMsg);
-    },
 
     launch: function() {   
         chartroot=Ext.ComponentQuery.query("#idchat")[0];
         busroot=Ext.ComponentQuery.query("#idbus")[0];
         mainui=Ext.ComponentQuery.query("#idmain")[0];
+        mymsgFeid=Ext.ComponentQuery.query("#idmsg")[0];
+        runningbus=new Sin.RunningBus('#idbus');
         this.initEvn();
         //this.testui();
+
+        titlebar=Ext.ComponentQuery.query("#idbusTitle")[0];
+        watchbtn=Ext.create('Ext.Button',{html:'Watch',ui:'action',align:'right',});
+        titlebar.add(watchbtn);
+        watchbtn.setHtml("unwatch");
+        watchbtn.on('tap',function(){Ext.Msg.alert('unwatch')});
+        this.initWindow();
+        window.testmain=this;
+
     },
+
+    initWindow:function(){
+        window.busControl=this;
+        window.onGpsPos=function(loc){
+            console.log("onGpsPos loc="+loc);
+            busControl.sendmsg_(loc);
+        };
+    },
+
     testui:function(){
         chartroot.add(Ext.create('Sin.ChatItem',{who:'who',msg:'this real msg'}));
         for(var i=0;i<10;i++){

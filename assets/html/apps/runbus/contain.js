@@ -1,13 +1,15 @@
 
 Ext.application({
     name: 'RunBus',
-    controllers: ['TestMain'],
+    //
+    controllers: ['MainControl'],
+    //controllers: ['TestMain'],
     launch: function() {   
         var senderroot = Ext.create('Ext.Container', {
             layout: 'hbox',
             style : "border-style: solid;border-radius: 1px",
                 items: [
-                    {xtype: 'textfield',name : 'name',flex:5},
+                    {xtype: 'textfield',name : 'name',flex:5,id:'idmsg'},
                     {xtype:'button',html:'Send',ui: 'action',flex:1,id:'idsend',},
                 ],    
             });
@@ -16,11 +18,7 @@ Ext.application({
             fullscreen: true,layout: 'vbox',id:'idmain',
             items: [
                 {
-                    xtype: 'titlebar',title:'BUS',
-                    items:[
-                        {xtype:'button',html:'Start',ui:'action',align:'right',
-                        },
-                    ],
+                    xtype: 'titlebar',title:'BUS',id:'idbusTitle',
                 },
                 {
                     xtype: 'container',flex:1,id:'idbus',
