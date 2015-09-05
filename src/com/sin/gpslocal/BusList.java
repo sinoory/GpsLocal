@@ -239,7 +239,7 @@ public class BusList extends Activity {
         	mWebView.loadUrl("file:///sdcard/sin/gps/html/linelist.html");
         }else{
         	//SCRIPT_MARK.d(TAG,"Load from assert,"+fromsdcard);
-        	mWebView.loadUrl("file:///android_asset/html/linelist.html");
+        	mWebView.loadUrl("file:///android_asset/html/apps/list/index.html");
         }
 
         mMenu=new UserMenuDlg();
