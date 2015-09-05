@@ -9,7 +9,7 @@ Ext.define('RunBus.controller.TestMain', {
         mymsgFeid=Ext.ComponentQuery.query("#idmsg")[0];
         runningbus=new Sin.RunningBus('#idbus');
         this.initEvn();
-        //this.testui();
+        this.testui();
 
         titlebar=Ext.ComponentQuery.query("#idbusTitle")[0];
         watchbtn=Ext.create('Ext.Button',{html:'Watch',ui:'action',align:'right',});
@@ -32,9 +32,9 @@ Ext.define('RunBus.controller.TestMain', {
     testui:function(){
         chartroot.add(Ext.create('Sin.ChatItem',{who:'who',msg:'this real msg'}));
         for(var i=0;i<10;i++){
-            var packt=i%2!=0?'start':'end';
             var who=i%2!=0?'sin':'qq';
-            chartroot.add(Ext.create('Sin.ChatItem',{who:who,msg:i+'this real msg',me:i%2!=0,layout:{pack:packt}}));
+            var type=i%2!=0?'Sin.ChatItemMe':'Sin.ChatItemOther';
+            chartroot.add(Ext.create(type,{who:who,msg:i+'this real msg'}));
         }
 
         runningbus=new Sin.RunningBus('#idbus');
@@ -44,7 +44,7 @@ Ext.define('RunBus.controller.TestMain', {
         runningbus.add({name:'movie',status:'next',index:2});
         runningbus.add({name:'house',status:'next',index:3});
 
-        runningbus.setStationStatus(2,'in');
+        //runningbus.setStationStatus(2,'in');
         busroot.hide=false;
 
     },

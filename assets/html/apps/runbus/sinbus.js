@@ -13,7 +13,7 @@ Ext.define('Sin.BusStation',{
         this.callParent(arguments);
         this.indictor=Ext.create('Ext.Container',{html:"<canvas id='canv"+this.getIndex()+"' width='20' height='20'></canvas>"});
         this.add(this.indictor);
-        this.stlable=Ext.create('Ext.Container',{html:"<b>"+this.getName()+"</b>&nbsp;<span></span>",maxHeight:'20px',align:'right'});
+        this.stlable=Ext.create('Ext.Container',{html:"<b>"+this.getName()+"</b>&nbsp;<span id='idEntTime'"+index+"></span>",maxHeight:'20px',align:'right'});
         this.add(this.stlable);
         /*
         if(this.getStatus()=='next'){
@@ -44,6 +44,12 @@ Ext.define('Sin.BusStation',{
         context.closePath();
         context.fill();
     },
+    getHMS:function(timstap){
+        var ts=new Date(timstap);
+        return ts.getHours()+":"+ts.getMinutes()+":"+ts.getSeconds();
+    },
+
+
     setBusStatus:function(status){
         console.log("setBusStatus from "+this.getStatus()+" to "+status);
         if(status==this.getStatus()){return}
@@ -56,6 +62,8 @@ Ext.define('Sin.BusStation',{
             this.setFlashColor('yellow');
             var s=this;
             this.flashtimer=setInterval(function(){s.flashCircle();},1000);
+            this.enterTime=new Date().getTime();
+            Ext.ComponentQuery.query("#idEntTime"+index)[0].setHtml(this.enterTime);
         }else if(status=='next'){
             this.drawCircle("blue");
         }else{
@@ -100,7 +108,6 @@ Ext.define('Sin.BusStartStation',{
         var cw = this.canvas.width;
         var ch = this.canvas.height;
 
-        console.log(cw,ch);
         context.lineWidth = 2;
         context.strokeStyle = 'black';
 
@@ -150,7 +157,6 @@ Ext.define('Sin.RunningBus', {
     add:function(station){
         var type=(station.index==0)?'Sin.BusStartStation':
                 (station.index==this.getStationcnt()-1?'Sin.BusEndStation':'Sin.BusStation');
-        console.log('type='+type+',this.stationcnt='+this.stationcnt+","+this.getStationcnt());
         var s=Ext.create(type,station);
         this.main.add(s);
         this.stations.push(s);
@@ -160,6 +166,9 @@ Ext.define('Sin.RunningBus', {
     },
     setStationStatus:function(index,status){
         this.stations[index].setBusStatus(status);
+    },
+    setEnterTime:function(index,time){
+        Ext.ComponentQuery.query("#idEntTime"+index)[0].setHtml(time);
     },
 });
 

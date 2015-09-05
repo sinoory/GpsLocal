@@ -378,7 +378,7 @@ public class UserList extends Activity {
         	mWebView.loadUrl("file:///sdcard/sin/gps/html/userlist.html");
         }else{
         	//SCRIPT_MARK.d(TAG,"Load from assert,"+fromsdcard);
-        	mWebView.loadUrl("file:///android_asset/html/userlist.html");
+        	mWebView.loadUrl("file:///android_asset/html/apps/runbus/index.html");
         }
 
         mMenu=new BusMenuDlg();

@@ -26,7 +26,7 @@ Ext.application({
                     scrollable: {direction: 'vertical',directionLock: true},
                 },
                 {
-                    xtype: 'titlebar',title: 'bus infomations',titleAlign:'left',
+                    xtype: 'titlebar',title: 'bus infomations',titleAlign:'left',id:'idbusinfo',
                     items:[
                         {xtype:'button',html:'-',ui:'action',align:'right',id:'idshowbus',},
                     ],
