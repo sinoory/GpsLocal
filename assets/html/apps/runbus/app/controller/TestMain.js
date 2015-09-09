@@ -15,7 +15,8 @@ Ext.define('RunBus.controller.TestMain', {
         watchbtn=Ext.create('Ext.Button',{html:'Watch',ui:'action',align:'right',});
         titlebar.add(watchbtn);
         watchbtn.setHtml("unwatch");
-        watchbtn.on('tap',function(){Ext.Msg.alert('unwatch')});
+        watchbtn.on('tap',function(){
+        });
         this.initWindow();
         window.testmain=this;
 

@@ -19,11 +19,72 @@ Ext.application({
 
     launch: function() {
         //get the configuration for the list
-        var title=Ext.create('Ext.TitleBar',{title:'BUS',id:'idbusTitle'});
-        //Ext.Viewport.add(title);
-        var listConfiguration = this.getListConfiguration();
-        Ext.Viewport.add(listConfiguration);
-        Ext.getStore();
+        var store = Ext.create('Ext.data.Store', {
+            fields: ['line', 'stations'],
+            sorters: 'line',
+            data: [
+
+                { line: 'Greg',    stations: 'Barry' },
+            ],
+        });
+
+
+        var mainui=Ext.create('Ext.Container', {
+            fullscreen: true,layout: 'vbox',id:'idmain',
+            items: [
+                {
+                    xtype: 'titlebar',title:'Local Lines',
+                },
+
+                {
+                    xtype: 'list',
+                    flex:1,id: 'list', //must add flex:1 , other wise list will not show
+                    itemTpl: '<b>{line}</b><br> {stations}',
+                    infinite: true,
+                    useSimpleItems: true,
+                    variableHeights: true,
+                    striped: true,
+                    onItemDisclosure: function(record, item, index, e) {
+                         e.stopEvent();
+                         //Ext.Msg.alert('Disclose', 'index='+index+",line=" + record.get('line'));
+                         if(!this.action){
+                             this.action=Ext.Viewport.add(
+                                {
+                                    xtype: 'actionsheet',
+                                    centered:true,
+                                    items: [
+                                        {
+                                            text: 'Delete',
+                                            ui  : 'decline'
+                                        },
+                                        {
+                                            text: 'Download'
+                                        },
+                                        {
+                                            text: 'Cancel',
+                                            ui  : 'confirm',
+                                            handler : function(){
+                                                //this.disable();
+                                                this.getParent().hide();
+                                            },
+                                        }
+                                    ]
+                                });
+                         }
+                         this.action.show();
+                     },
+                    listeners: {
+                        select: function(view, record) {
+                            Ext.Msg.alert('Selected!', 'You selected ' + record.get('line'));
+                        }
+                    },
+                    store: store
+                },
+            ]
+        });
+        //var listConfiguration = this.getListConfiguration();
+
+        //Ext.Viewport.add(listConfiguration);
         list=Ext.ComponentQuery.query("#list")[0];
         store=list.getStore();
         //store.getAt(1).set('line','王');
@@ -42,69 +103,4 @@ Ext.application({
         });
     },
 
-    /**
-     * Returns a configuration object to be used when adding the list to the viewport.
-     */
-    getListConfiguration: function() {
-        var store = Ext.create('Ext.data.Store', {
-            //give the store some fields
-            fields: ['line', 'stations'],
-
-            //filter the data using the line field
-            sorters: 'line',
-
-            //autoload the data from the server
-            //autoLoad: true,
-
-            //setup the grouping functionality to group by the first letter of the line field
-/*            grouper: {
-                groupFn: function(record) {
-                    return record.get('line')[0];
-                }
-            },
-*/
-            data: [
-            //    { line: 'Greg',    stations: 'Barry' },
-            ],
-        });
-
-        return {
-            //give it an xtype of list for the list component
-            xtype: 'list',
-
-            id: 'list',
-/*
-            scrollable: {
-                indicators: false
-            },
-*/
-            //set the itemtpl to show the fields for the store
-            itemTpl: '<b>{line}</b><br> {stations}',
-
-            //group the list
- //           grouped: true,
-
-            //enable the indexBar
- //           indexBar: true,
-
-            infinite: true,
-
-            useSimpleItems: true,
-
-            variableHeights: true,
-
-            striped: true,
-
-            //ui: 'round',
-
-            //set the function when a user taps on a disclsoure icon
-             onItemDisclosure: function(record, item, index, e) {
-                 //show a messagebox alert which shows the persons line
-                 e.stopEvent();
-                 Ext.Msg.alert('Disclose', 'Disclose more info for ' + record.get('line'));
-             },
-            //bind the store to this list
-            store: store
-        };
-    }
 });

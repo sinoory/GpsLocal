@@ -2,9 +2,14 @@
 Ext.application({
     name: 'RunBus',
     //
-    controllers: ['MainControl'],
+    //controllers: ['MainControl'],
     //controllers: ['TestMain'],
+    views:['LocalList'],
     launch: function() {   
+        Ext.create('RunBus.view.LocalList');
+        //Ext.Viewport.add({xclass:'RunBus.view.Buttons'});
+        //Ext.Viewport.add({xclass:'RunBus.view.LocalList'});
+        /*
         var senderroot = Ext.create('Ext.Container', {
             layout: 'hbox',
             style : "border-style: solid;border-radius: 1px",
@@ -41,6 +46,6 @@ Ext.application({
         chartroot=Ext.ComponentQuery.query("#idchat")[0];
         busroot=Ext.ComponentQuery.query("#idbus")[0];
         mainui.add(senderroot);
-
+*/
     },
 });
