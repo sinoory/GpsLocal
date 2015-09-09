@@ -1,4 +1,5 @@
 Ext.define('RunBus.view.Runningbus',{
+    xtype:'tpRunningbus',
     extend:'Ext.Container',
     config: {
         fullscreen: true,

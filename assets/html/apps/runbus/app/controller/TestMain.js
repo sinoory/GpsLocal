@@ -16,6 +16,7 @@ Ext.define('RunBus.controller.TestMain', {
         titlebar.add(watchbtn);
         watchbtn.setHtml("unwatch");
         watchbtn.on('tap',function(){
+            MainUi.setActiveItem(0);
         });
         this.initWindow();
         window.testmain=this;

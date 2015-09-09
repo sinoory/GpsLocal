@@ -1,4 +1,5 @@
 Ext.define('RunBus.view.LocalList',{
+    xtype:'tpLocalList',
     extend:'Ext.Container',
     config: {
         fullscreen: true,
