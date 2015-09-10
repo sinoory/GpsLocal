@@ -60,9 +60,16 @@ Ext.define('RunBus.view.LocalList',{
                 },
             },
         ],
+        listeners: {
+                activeitemchange: 'onActiveItemChange',
+                //itemindexchange: 'onItemIndexChange'
+        },
 
-        }
+        },
 
+        onActiveItemChange: function(carousel, newItem, oldItem) {
+            Ext.Msg.alert("LocalList onActiveItemChange:");
+        },
         //var listConfiguration = this.getListConfiguration();
         //Ext.Viewport.add(listConfiguration);
         /*
