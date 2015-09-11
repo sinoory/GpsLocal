@@ -2,8 +2,8 @@
 Ext.application({
     name: 'RunBus',
     //
-    //controllers: ['MainControl'],
-    controllers: ['TestMain'],
+    controllers: ['MainControl'],
+    //controllers: ['TestMain'],
     views:['LocalList','Runningbus'],
     viewport : {
         layout : {

@@ -1,20 +1,40 @@
-Ext.define('RunBus.view.LocalList',{
-    xtype:'tpLocalList',
+Ext.define('RunBus.view.ServerList',{
+    xtype:'tpServerList',
     extend:'Ext.Container',
     config: {
         fullscreen: true,
         layout:'vbox', //TODO:impotant , otherwise the list can'b show
         items: [
             {
-                xtype: 'titlebar',title:'Local Lines',
+                xtype: 'titlebar',title:'Server Lines',
                 items:[
-                    {xtype:'button',html:'<',ui:'action',align:'left',
+                    {xtype:'button',html:'<',ui:'action',align:'right',
                         handler:function(){Ext.Viewport.setActiveItem(0);}
                     },
                     {xtype:'button',html:'>',ui:'action',align:'right',},
                 ],
 
             },
+            {
+                xtype: 'toolbar',
+                items: [
+                    {xtype: 'searchfield',placeHolder: 'Search',name: 'searchfield'
+                    },
+                    {
+                        xtype: 'selectfield',
+                        name : 'options',
+                        //label: Ext.theme.name === "Blackberry" ? 'Select': 'select',
+                        options: [
+                            {text: 'by line name',  value: '1'},
+                            {text: 'by author', value: '2'},
+                            {text: 'by position', value: '3'}
+                        ]
+                    },
+                    {xtype:'button',html:'Search',ui:'action',},
+
+                ]
+            },
+
             {
                 xtype: 'list',
                 flex:1,id: 'list', //must add flex:1 , other wise list will not show
