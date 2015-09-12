@@ -11,17 +11,21 @@ Ext.define('RunBus.view.ServerList',{
                     {xtype:'button',html:'<',ui:'action',align:'right',
                         handler:function(){Ext.Viewport.setActiveItem(0);}
                     },
-                    {xtype:'button',html:'>',ui:'action',align:'right',},
                 ],
 
             },
             {
                 xtype: 'toolbar',
                 items: [
-                    {xtype: 'searchfield',placeHolder: 'Search',name: 'searchfield'
+                    {xtype: 'searchfield',placeHolder: 'Search',name: 'searchfield',flex:2,
+                        listeners: {
+                            keyup: function(who,e){
+                                    Ext.Msg.alert("keyup event e="+e.browserEvent.which);
+                            },
+                        },
                     },
                     {
-                        xtype: 'selectfield',
+                        xtype: 'selectfield',flex:2,
                         name : 'options',
                         //label: Ext.theme.name === "Blackberry" ? 'Select': 'select',
                         options: [
@@ -30,7 +34,7 @@ Ext.define('RunBus.view.ServerList',{
                             {text: 'by position', value: '3'}
                         ]
                     },
-                    {xtype:'button',html:'Search',ui:'action',},
+                    //{xtype:'button',html:'Search',ui:'action',flex:1},
 
                 ]
             },

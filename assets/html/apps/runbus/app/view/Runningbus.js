@@ -17,7 +17,10 @@ Ext.define('RunBus.view.Runningbus',{
                 xtype: 'titlebar',title: 'bus infomations',titleAlign:'left',id:'idbusinfo',
                 items:[
                     {xtype:'button',html:'*',ui:'action',align:'right',
-                        handler:function(){Ext.Viewport.setActiveItem(1);}
+                        handler:function(){
+                            Ext.Viewport.setActiveItem(1);
+                            Ext.Viewport.getActiveItem(1).onResume();
+                        }
                     },
                     {xtype:'button',html:'-',ui:'action',align:'right',id:'idshowbus',},
                 ],

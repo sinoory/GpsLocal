@@ -371,7 +371,7 @@ public class UserList extends Activity {
 
         
 
-        int fromsdcard=AndFileUty.isExist(this,"/sin/gps/html/","userlist.html");
+        int fromsdcard=1;//AndFileUty.isExist(this,"/sin/gps/html/","userlist.html");
         if(fromsdcard==0){
         	//SCRIPT_MARK.d(TAG,"Load from sdcard");
             fromSd=true;

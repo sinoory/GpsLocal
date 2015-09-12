@@ -8,16 +8,18 @@ Ext.define('RunBus.view.LocalList',{
             {
                 xtype: 'titlebar',title:'Local Lines',
                 items:[
-                    {xtype:'button',html:'<',ui:'action',align:'left',
+                    {xtype:'button',html:'<',ui:'action',align:'right',
                         handler:function(){Ext.Viewport.setActiveItem(0);}
                     },
-                    {xtype:'button',html:'>',ui:'action',align:'right',},
+                    {xtype:'button',html:'>',ui:'action',align:'right',
+                        handler:function(){Ext.Viewport.setActiveItem(2);}
+                    },
                 ],
 
             },
             {
                 xtype: 'list',
-                flex:1,id: 'list', //must add flex:1 , other wise list will not show
+                flex:1,id: 'idlocallist', //must add flex:1 , other wise list will not show
                 itemTpl: '<b>{line}</b><br> {stations}',
                 infinite: true,
                 useSimpleItems: true,
@@ -59,11 +61,8 @@ Ext.define('RunBus.view.LocalList',{
                 },
                 store: {
                     fields: ['line', 'stations'],
-                    sorters: 'line',
-                    data: [
-                        { line: 'Greg',    stations: 'Barry' },
-                    ],
-
+                    //sorters: 'line',
+                    data: [],
                 },
             },
         ],
@@ -72,6 +71,42 @@ Ext.define('RunBus.view.LocalList',{
                 //itemindexchange: 'onItemIndexChange'
         },
 
+    },
+
+    initialize:function(){
+        this.callParent(arguments);
+    },
+
+    onResume:function(){
+        var store=Ext.ComponentQuery.query("#idlocallist")[0].getStore();
+        locallines=jlh.getShp("alllines");
+        if(locallines){
+            locallines=locallines.split(",");
+        }
+        var lines=locallines;
+        for(var i=0;i<lines.length;i++){
+            dbg("lines["+i+"]="+lines[i]);
+            if(!lines[i]){
+                continue;
+            }
+            var ln=jlh.getShp(lines[i]);
+            if(!ln){
+                dbg(lines[i]+" no detail info exist");
+                continue;
+            }
+            var l=JSON.parse(ln);
+            var stations="";
+            dbg(l.stations.length);
+            for(var j=0;j< l.stations.length;j++){
+                stations+=l.stations[j].stname+",";
+            }
+            if(!l.ownerid){
+                //linehtml+="<button id='idup"+i+"' onclick='uploadline()'>upload</button>";
+            }else if(l.linechanged && l.ownerid==userId){
+                //linehtml+="<button id='idup"+i+"' onclick='up2svr()'>updateServer</button>";
+            }
+            store.add({line:lines[i],stations:stations});
+        }
     },
 
     onActiveItemChange: function(carousel, newItem, oldItem) {

@@ -50,7 +50,9 @@ Ext.define('RunBus.controller.MainControl', {
     initWindow:function(){
         window.busControl=this;
         window.dbg=function(msg){
-            busControl.showLocalMsg(msg);
+            //busControl.showLocalMsg(msg);
+            console.log("DBG "+msg);
+            //Ext.Msg.alert(msg);
         };
         window.onGpsPos=function(loc){
             mLatestLoc=JSON.parse(loc);

@@ -4,7 +4,7 @@ Ext.application({
     //
     controllers: ['MainControl'],
     //controllers: ['TestMain'],
-    views:['LocalList','Runningbus'],
+    views:['LocalList','ServerList','Runningbus','Testview'],
     viewport : {
         layout : {
             type      : 'card',
@@ -17,6 +17,8 @@ Ext.application({
         Ext.Viewport.add([
                 {xtype:'tpRunningbus'},
                 {xtype:'tpLocalList'},
+                {xtype:'tpServerList'},
+                {xtype:'testview'},
         ]);
         /*
         setTimeout(function() {
