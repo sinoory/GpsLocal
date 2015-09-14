@@ -16,7 +16,10 @@ Ext.define('RunBus.controller.TestMain', {
         titlebar.add(watchbtn);
         watchbtn.setHtml("unwatch");
         watchbtn.on('tap',function(){
-            Ext.Viewport.setActiveItem(1);
+            //Ext.Viewport.setActiveItem(1);
+            runningbus.removeAll();
+            chartroot.removeAll(true,true);
+            titlebar.removeAll(true,true);
         });
         this.initWindow();
         window.testmain=this;

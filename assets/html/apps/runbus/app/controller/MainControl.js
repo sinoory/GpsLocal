@@ -125,12 +125,17 @@ Ext.define('RunBus.controller.MainControl', {
         chartroot.getScrollable().getScroller().scrollToEnd();
     },
 
-
+    clrBusInfo:function(){
+        runningbus.removeAll();
+    },
     getBusStations:function(){
         info=window.buss.getBusInfo();
         businfo= JSON.parse(info);
+        //titlebar.removeAll(true,true);
         Ext.ComponentQuery.query("#idbusTitle")[0].setTitle(businfo.name);
+        if(titlebar.btn) titlebar.remove(titlebar.btn);
         runningbus.setStationcnt(businfo.stations.length);
+        runningbus.removeAll();
         for(var i=0;i<businfo.stations.length;i++){
             runningbus.add({name:businfo.stations[i].stname,status:'in',index:i});
         }
@@ -145,6 +150,7 @@ Ext.define('RunBus.controller.MainControl', {
                 }
             });
             titlebar.add(startbtn);
+            titlebar.btn=startbtn;
         }else{
             watchbtn=Ext.create('Ext.Button',{html:'Watch',ui:'action',align:'right',});
             watchbtn.watch=false;
@@ -153,6 +159,7 @@ Ext.define('RunBus.controller.MainControl', {
                 watchbtn.setHtml(watchbtn.watch?'Unwatch':'Watch');
             });
             titlebar.add(watchbtn);
+            titlebar.btn=watchbtn
         }
 
     },

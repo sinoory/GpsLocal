@@ -170,6 +170,9 @@ Ext.define('Sin.RunningBus', {
     setEnterTime:function(index,time){
         Ext.ComponentQuery.query("#idEntTime"+index)[0].setHtml(time);
     },
+    removeAll:function(){
+        this.main.removeAll(true,true);
+    },
 });
 
 

@@ -20,7 +20,7 @@ Ext.define('RunBus.view.LocalList',{
             {
                 xtype: 'list',
                 flex:1,id: 'idlocallist', //must add flex:1 , other wise list will not show
-                itemTpl: '<b>{line}</b><br> {stations}',
+                itemTpl: '<b>{author} {line}</b><br> {stations}',
                 infinite: true,
                 useSimpleItems: true,
                 variableHeights: true,
@@ -34,16 +34,27 @@ Ext.define('RunBus.view.LocalList',{
                                 xtype: 'actionsheet',
                                 centered:true,
                                 items: [
-                                    {
-                                        text: 'Delete',
-                                        ui  : 'decline'
+                                    {text: 'Delete',ui  : 'decline',
+                                        handler : function(){
+                                            localliststore.remove(tmpLocalListRecord);
+                                            this.getParent().hide();
+                                        },
                                     },
-                                    {
-                                        text: 'Download'
+                                    {text: 'Select',
+                                        handler : function(){
+                                            jlh.setShp("lastLine",tmpLocalListRecord.get('line'));
+                                            busControl.getBusStations();
+                                            this.getParent().hide();
+                                        },
                                     },
-                                    {
-                                        text: 'Cancel',
-                                        ui  : 'confirm',
+                                    {text: 'Upload',
+                                        handler : function(){
+                                            if(tmpLocalListRecord.get('author')){
+                                            }
+                                            this.getParent().hide();
+                                        },
+                                    },
+                                    {text: 'Cancel',ui  : 'confirm',
                                         handler : function(){
                                             //this.disable();
                                             this.getParent().hide();
@@ -52,17 +63,19 @@ Ext.define('RunBus.view.LocalList',{
                                 ]
                             });
                      }
+                     tmpLocalListRecord=record;
                      this.action.show();
-                 },
+                },
                 listeners: {
                     select: function(view, record) {
-                        Ext.Msg.alert('Selected!', 'You selected ' + record.get('line'));
                     }
                 },
                 store: {
-                    fields: ['line', 'stations'],
+                    fields: ['line', 'stations','author'],
                     //sorters: 'line',
-                    data: [],
+                    data: [
+                    {'line':'line','stations':'aa,bb,cc','author':'author'},
+                        ],
                 },
             },
         ],
@@ -78,7 +91,10 @@ Ext.define('RunBus.view.LocalList',{
     },
 
     onResume:function(){
+        if(this.storeInitialed) return;
+        this.storeInitialed=true;
         var store=Ext.ComponentQuery.query("#idlocallist")[0].getStore();
+        localliststore=store;
         locallines=jlh.getShp("alllines");
         if(locallines){
             locallines=locallines.split(",");
@@ -100,12 +116,7 @@ Ext.define('RunBus.view.LocalList',{
             for(var j=0;j< l.stations.length;j++){
                 stations+=l.stations[j].stname+",";
             }
-            if(!l.ownerid){
-                //linehtml+="<button id='idup"+i+"' onclick='uploadline()'>upload</button>";
-            }else if(l.linechanged && l.ownerid==userId){
-                //linehtml+="<button id='idup"+i+"' onclick='up2svr()'>updateServer</button>";
-            }
-            store.add({line:lines[i],stations:stations});
+            store.add({line:lines[i],stations:stations,author:l.ownerid});
         }
     },
 
