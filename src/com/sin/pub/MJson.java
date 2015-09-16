@@ -34,13 +34,17 @@ public class MJson{
 
     public static String STATION_SEP="=";
     public static void addStation(Context ctx,String linename,String stationname,
-            boolean direct,String location,int index){
+            boolean direct,String location,int index,String area){
         SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(ctx);
-        String line=sp.getString(linename,"{'name':'"+linename+"','stations':[],'stationDn':[],'lver':0,'linechanged':false}");
+        String line=sp.getString(linename,"{'name':'"+linename+"','stations':[],'stationDn':[],'lver':0,'linechanged':false,'area':''}");
         Log.d("DBG","addStation line="+line);
         try{
             JSONObject jsonObject = new JSONObject(line);
             int lineversion=jsonObject.getInt("lver");
+            String jsarea=jsonObject.getString("area");
+            if(jsarea.equals("") && !area.equals("")){
+                jsonObject.put("area",area);
+            }
             boolean linechanged=jsonObject.getBoolean("linechanged");
             String stationtype=direct?"stations":"stationDn";
             JSONArray array=jsonObject.getJSONArray(stationtype);

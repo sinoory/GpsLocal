@@ -20,7 +20,7 @@ Ext.define('RunBus.view.LocalList',{
             {
                 xtype: 'list',
                 flex:1,id: 'idlocallist', //must add flex:1 , other wise list will not show
-                itemTpl: '<b>{author} {line}</b><br> {stations}',
+                itemTpl: '<b>{author} {area} {line}</b><br> {stations}',
                 infinite: true,
                 useSimpleItems: true,
                 variableHeights: true,
@@ -37,6 +37,11 @@ Ext.define('RunBus.view.LocalList',{
                                     {text: 'Delete',ui  : 'decline',
                                         handler : function(){
                                             localliststore.remove(tmpLocalListRecord);
+                                            jlh.rmShp(tmpLocalListRecord.get('line'));
+                                            locallines.splice(tmpLocalListRecord.get('index'),1);
+                                            jlh.setShp("alllines",locallines.join(","));
+                                            jlh.setShp("lastLine","");
+                                            busControl.getBusStations();
                                             this.getParent().hide();
                                         },
                                     },
@@ -64,6 +69,11 @@ Ext.define('RunBus.view.LocalList',{
                             });
                      }
                      tmpLocalListRecord=record;
+                     var auth=record.get('author');
+                     console.log("DBG LocalList auth="+auth+",userId="+userId);
+                     if((auth==userId || !auth) && record.get('area')){ this.action.getAt(2).show();}
+                     else this.action.getAt(2).hide();
+
                      this.action.show();
                 },
                 listeners: {
@@ -71,10 +81,10 @@ Ext.define('RunBus.view.LocalList',{
                     }
                 },
                 store: {
-                    fields: ['line', 'stations','author'],
+                    fields: ['line', 'stations','author','area','index'],
                     //sorters: 'line',
                     data: [
-                    {'line':'line','stations':'aa,bb,cc','author':'author'},
+                    //{'line':'line','stations':'aa,bb,cc','author':'author'},
                         ],
                 },
             },
@@ -91,9 +101,10 @@ Ext.define('RunBus.view.LocalList',{
     },
 
     onResume:function(){
-        if(this.storeInitialed) return;
-        this.storeInitialed=true;
+        //if(this.storeInitialed) return;
+        //this.storeInitialed=true;
         var store=Ext.ComponentQuery.query("#idlocallist")[0].getStore();
+        store.removeAll();
         localliststore=store;
         locallines=jlh.getShp("alllines");
         if(locallines){
@@ -101,22 +112,22 @@ Ext.define('RunBus.view.LocalList',{
         }
         var lines=locallines;
         for(var i=0;i<lines.length;i++){
-            dbg("lines["+i+"]="+lines[i]);
+            //dbg("lines["+i+"]="+lines[i]);
             if(!lines[i]){
                 continue;
             }
             var ln=jlh.getShp(lines[i]);
             if(!ln){
-                dbg(lines[i]+" no detail info exist");
+                //dbg(lines[i]+" no detail info exist");
                 continue;
             }
             var l=JSON.parse(ln);
             var stations="";
-            dbg(l.stations.length);
+            //dbg(l.stations.length);
             for(var j=0;j< l.stations.length;j++){
                 stations+=l.stations[j].stname+",";
             }
-            store.add({line:lines[i],stations:stations,author:l.ownerid});
+            store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i});
         }
     },
 

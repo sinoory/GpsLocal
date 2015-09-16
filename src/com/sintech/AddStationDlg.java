@@ -81,11 +81,18 @@ public class AddStationDlg extends Activity {
                     return;
                 }
                 MJson.addStation(AddStationDlg.this,mFirstEdit.getText().toString(),
-                    mMidEdit.getText().toString(),true,mBottomEdit.getText().toString(),-1);
+                    mMidEdit.getText().toString(),true,mBottomEdit.getText().toString(),-1,area);
                 SharedPreferences sp=PreferenceManager.getDefaultSharedPreferences(AddStationDlg.this);
                 String alllines=sp.getString("alllines","");
                 Log.d("DBG","addStation alllines="+alllines+",line="+line);
-                if(alllines.indexOf(line)==-1){
+                boolean existline=false;
+                for(String l : alllines.split(",")){
+                    if(l.equals(line)){
+                        existline=true;
+                        break;
+                    }
+                }
+                if(!existline){
                     alllines+=","+line;
                     sp.edit().putString("alllines",alllines).commit();;
                 }
@@ -105,7 +112,9 @@ public class AddStationDlg extends Activity {
         String prog="0";
     	if (extras != null) {
             mBottomEdit.setText(extras.getString("BOTTOM_EDIT_TXT"));
-            mMidEdit.setText(extras.getString("MID_EDIT_TXT"));
+            area=extras.getString("MID_EDIT_TXT");
+            if(area==null) area="";
+            mMidEdit.setText(area);
             mFirstEdit.setText(extras.getString("FIRST_EDIT_TXT"));
     	}
 
@@ -116,6 +125,7 @@ public class AddStationDlg extends Activity {
 
     }
     int maxProg=100;
+    String area="";
  
 }
 
