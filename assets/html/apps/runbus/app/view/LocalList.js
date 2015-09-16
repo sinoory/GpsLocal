@@ -81,7 +81,7 @@ Ext.define('RunBus.view.LocalList',{
                     }
                 },
                 store: {
-                    fields: ['line', 'stations','author','area','index'],
+                    fields: ['line', 'stations','author','shortarea','index'],
                     //sorters: 'line',
                     data: [
                     //{'line':'line','stations':'aa,bb,cc','author':'author'},
@@ -127,7 +127,13 @@ Ext.define('RunBus.view.LocalList',{
             for(var j=0;j< l.stations.length;j++){
                 stations+=l.stations[j].stname+",";
             }
-            store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i});
+            var shortarea=l.area;
+            if(shortarea){
+                if(shortarea.indexOf("区")!=-1){
+                    shortarea=shortarea.substring(0,shortarea.indexOf("区"));
+                }
+            }
+            store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i,shortarea:shortarea});
         }
     },
 
