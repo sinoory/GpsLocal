@@ -50,7 +50,7 @@ Ext.define('RunBus.view.ServerList',{
                 variableHeights: true,
                 striped: true,
                 store: {
-                    fields: ['line', 'stations','jsline'],
+                    fields: ['line', 'stations','jsline','author'],
                     sorters: 'line',
                     data: [
                         //{ line: 'Greg',    stations: 'Barry' },
@@ -69,6 +69,10 @@ Ext.define('RunBus.view.ServerList',{
                                 items: [
                                     {text: 'Delete',ui  : 'decline',
                                         handler : function(){
+                                            serverliststore.remove([tSvRc])
+                                            jlh.sendMsg(JSON.stringify({"type":"delline","lineid":tSvRc.get('jsline').lineid}));
+
+                                            this.getParent().hide();
                                         },
                                     },
                                     {text: 'Download',
@@ -76,7 +80,7 @@ Ext.define('RunBus.view.ServerList',{
 
                                             var l=tSvRc.get("jsline");
                                             var rcd={line:tSvRc.get('line'),stations:tSvRc.get('stations'),author:l.ownerid,area:l.area,index:locallines.length,shortarea:l.shortarea,jsline:l};
-                                            console.log("download:"+JSON.stringify(rcd));
+                                            //console.log("download:"+JSON.stringify(rcd));
 
                                             localliststore.add(rcd);
                                             jlh.setShp(tSvRc.get('line'),JSON.stringify(tSvRc.jsline));
@@ -123,6 +127,7 @@ Ext.define('RunBus.view.ServerList',{
     onResume:function(){
         var store=serverlinelist.getStore();
         store.removeAll();
+        serverliststore=store;
         buss.sendMsg(JSON.stringify({"type":"getlines"}));
     },
         //var listConfiguration = this.getListConfiguration();

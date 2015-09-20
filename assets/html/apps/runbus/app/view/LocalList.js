@@ -1,7 +1,7 @@
 Ext.define('RunBus.view.LocalList',{
     xtype:'tpLocalList',
     extend:'Ext.Container',
-    config: {
+        config: {
         fullscreen: true,
         layout:'vbox', //TODO:impotant , otherwise the list can'b show
         items: [
@@ -23,7 +23,7 @@ Ext.define('RunBus.view.LocalList',{
             {
                 xtype: 'list',
                 flex:1,id: 'idlocallist', //must add flex:1 , other wise list will not show
-                itemTpl: '<b>{author} {area} {line}</b><br> {stations}',
+                itemTpl: '<b>{author} {shortarea} {line}</b><br> {stations}',
                 store: {
                     fields: ['line', 'stations','author','shortarea','index','jsline'],
                     //sorters: 'line',
@@ -47,9 +47,9 @@ Ext.define('RunBus.view.LocalList',{
                                 items: [
                                     {text: 'Delete',ui  : 'decline',
                                         handler : function(){
-                                            localliststore.remove(tmpLocalListRecord);
-                                            jlh.rmShp(tmpLocalListRecord.get('line'));
-                                            locallines.splice(tmpLocalListRecord.get('index'),1);
+                                            localliststore.remove(tLcRcd);
+                                            jlh.rmShp(tLcRcd.get('line'));
+                                            locallines.splice(tLcRcd.get('index'),1);
                                             jlh.setShp("alllines",locallines.join(","));
                                             jlh.setShp("lastLine","");
                                             busControl.getBusStations();
@@ -58,15 +58,17 @@ Ext.define('RunBus.view.LocalList',{
                                     },
                                     {text: 'Select',
                                         handler : function(){
-                                            jlh.setShp("lastLine",tmpLocalListRecord.get('line'));
+                                            jlh.setShp("lastLine",tLcRcd.get('line'));
                                             busControl.getBusStations();
                                             this.getParent().hide();
                                         },
                                     },
                                     {text: 'Upload',
                                         handler : function(){
-                                            if(tmpLocalListRecord.get('author')){
-                                            }
+                                            var jsline=tLcRcd.get('jsline');
+                                            var js={"type":"uploadLine","stations":jsline.stations,
+                                                "name":jsline.name,"ownerid":userId,"lver":jsline.lver,lineid:jsline.lineid,index:tLcRcd.lsIndex};
+                                            jlh.sendMsg(JSON.stringify(js));
                                             this.getParent().hide();
                                         },
                                     },
@@ -79,10 +81,12 @@ Ext.define('RunBus.view.LocalList',{
                                 ]
                             });
                      }
-                     tmpLocalListRecord=record;
+                     tLcRcd=record;
+                     tLcRcd.lsIndex=index;
                      var auth=record.get('author');
                      console.log("DBG LocalList auth="+auth+",userId="+userId);
-                     if((auth==userId || !auth) && record.get('area')){ this.action.getAt(2).show();}
+                     if((auth==userId || !auth) && record.get('shortarea')){ 
+                         this.action.getAt(2).show();}
                      else this.action.getAt(2).hide();
 
                      this.action.show();
@@ -116,25 +120,25 @@ Ext.define('RunBus.view.LocalList',{
         }
         var lines=locallines;
         for(var i=0;i<lines.length;i++){
-            //dbg("lines["+i+"]="+lines[i]);
+            dbg("lines["+i+"]="+lines[i]);
             if(!lines[i]){
                 continue;
             }
             var ln=jlh.getShp(lines[i]);
-            if(!ln){
-                //dbg(lines[i]+" no detail info exist");
+            if(!ln || ln=="undefined"){
+                dbg(lines[i]+" no detail info exist");
                 continue;
             }
             var l=JSON.parse(ln);
             var stations="";
-            //dbg(l.stations.length);
+            dbg(l.stations.length);
             for(var j=0;j< l.stations.length;j++){
                 stations+=l.stations[j].stname+",";
             }
             var shortarea=l.area;
             if(shortarea){
                 if(shortarea.indexOf("区")!=-1){
-                    shortarea=shortarea.substring(0,shortarea.indexOf("区"));
+                    shortarea=shortarea.substring(0,shortarea.indexOf("区")+1);
                 }
             }
             store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i,shortarea:shortarea,jsline:l});
