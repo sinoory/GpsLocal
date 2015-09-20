@@ -129,8 +129,7 @@ Ext.define('RunBus.controller.MainControl', {
                 for(var j=0;j<lines[i].stations.length;j++){
                     allstations+=(lines[i].stations[j].stname+",");
                 }
-                //store.add({line:lines[i].name,stations:allstations});
-                store.add({line:lines[i].name,stations:allstations,author:lines[i].ownerid,area:lines[i].area,shortarea:lines[i].shortarea,lineid:lines[i].lineid});
+                store.add({line:lines[i].name,stations:allstations,jsline:lines[i]});
             }
 
         }else{

@@ -24,6 +24,14 @@ Ext.define('RunBus.view.LocalList',{
                 xtype: 'list',
                 flex:1,id: 'idlocallist', //must add flex:1 , other wise list will not show
                 itemTpl: '<b>{author} {area} {line}</b><br> {stations}',
+                store: {
+                    fields: ['line', 'stations','author','shortarea','index','jsline'],
+                    //sorters: 'line',
+                    data: [
+                    //{'line':'line','stations':'aa,bb,cc','author':'author'},
+                        ],
+                },
+
                 infinite: true,
                 useSimpleItems: true,
                 variableHeights: true,
@@ -83,13 +91,6 @@ Ext.define('RunBus.view.LocalList',{
                     select: function(view, record) {
                     }
                 },
-                store: {
-                    fields: ['line', 'stations','author','shortarea','index'],
-                    //sorters: 'line',
-                    data: [
-                    //{'line':'line','stations':'aa,bb,cc','author':'author'},
-                        ],
-                },
             },
         ],
         listeners: {
@@ -136,7 +137,7 @@ Ext.define('RunBus.view.LocalList',{
                     shortarea=shortarea.substring(0,shortarea.indexOf("区"));
                 }
             }
-            store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i,shortarea:shortarea});
+            store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i,shortarea:shortarea,jsline:l});
         }
     },
 

@@ -9,7 +9,7 @@ Ext.define('RunBus.view.ServerList',{
                 xtype: 'titlebar',title:'Server Lines',
                 items:[
                     {xtype:'button',html:'<',ui:'action',align:'right',
-                        handler:function(){Ext.Viewport.setActiveItem(0);}
+                        handler:function(){Ext.Viewport.setActiveItem(1);}
                     },
                 ],
 
@@ -49,6 +49,15 @@ Ext.define('RunBus.view.ServerList',{
                 useSimpleItems: true,
                 variableHeights: true,
                 striped: true,
+                store: {
+                    fields: ['line', 'stations','jsline'],
+                    sorters: 'line',
+                    data: [
+                        //{ line: 'Greg',    stations: 'Barry' },
+                    ],
+
+                },
+
                 onItemDisclosure: function(record, item, index, e) {
                      e.stopEvent();
                      //Ext.Msg.alert('Disclose', 'index='+index+",line=" + record.get('line'));
@@ -58,9 +67,24 @@ Ext.define('RunBus.view.ServerList',{
                                 xtype: 'actionsheet',
                                 centered:true,
                                 items: [
-                                    {text: 'Delete',ui  : 'decline'
+                                    {text: 'Delete',ui  : 'decline',
+                                        handler : function(){
+                                        },
                                     },
-                                    {text: 'Download'
+                                    {text: 'Download',
+                                        handler : function(){
+
+                                            var l=tSvRc.get("jsline");
+                                            var rcd={line:tSvRc.get('line'),stations:tSvRc.get('stations'),author:l.ownerid,area:l.area,index:locallines.length,shortarea:l.shortarea,jsline:l};
+                                            console.log("download:"+JSON.stringify(rcd));
+
+                                            localliststore.add(rcd);
+                                            jlh.setShp(tSvRc.get('line'),JSON.stringify(tSvRc.jsline));
+                                            locallines.push(tSvRc.get('line'));
+                                            jlh.setShp("alllines",locallines.join(","));
+                                            this.getParent().hide();
+
+                                        },
                                     },
                                     {text: 'Cancel',ui  : 'confirm',
                                         handler : function(){
@@ -70,7 +94,7 @@ Ext.define('RunBus.view.ServerList',{
                                 ]
                             });
                      }
-                     tmpLocalListRecord=record;
+                     tSvRc=record;
                      var auth=record.get('author');
                      console.log("DBG ServerList auth="+auth+",userId="+userId);
                      if((auth==userId ) ){ this.action.getAt(0).show();}
@@ -82,14 +106,6 @@ Ext.define('RunBus.view.ServerList',{
                     select: function(view, record) {
                         //Ext.Msg.alert('Selected!', 'You selected ' + record.get('line'));
                     }
-                },
-                store: {
-                    fields: ['line', 'stations'],
-                    sorters: 'line',
-                    data: [
-                        //{ line: 'Greg',    stations: 'Barry' },
-                    ],
-
                 },
             },
         ],
@@ -105,9 +121,8 @@ Ext.define('RunBus.view.ServerList',{
     },
 
     onResume:function(){
-        var store=Ext.ComponentQuery.query("#idlocallist")[0].getStore();
+        var store=serverlinelist.getStore();
         store.removeAll();
-        serverliststore=store;
         buss.sendMsg(JSON.stringify({"type":"getlines"}));
     },
         //var listConfiguration = this.getListConfiguration();
