@@ -40,10 +40,11 @@ Ext.define('RunBus.controller.MainControl', {
         mymsgFeid=Ext.ComponentQuery.query("#idmsg")[0];
         runningbus=new Sin.RunningBus('#idbus');
         titlebar=Ext.ComponentQuery.query("#idbusTitle")[0];
+        serverlinelist=Ext.ComponentQuery.query("#serverlinelist")[0];
         this.initEvn();
+        sendbtn.disable();
         this.getBusStations();
         this.initWindow();
-        sendbtn.disable();
         buss.prepConn();
     },
 
@@ -101,6 +102,7 @@ Ext.define('RunBus.controller.MainControl', {
     },
     onWsMessage:function(msg){ //msg from websocket server
         var js=JSON.parse(msg);
+        dbg("js onWsMessage type="+js.type);
         if(js.type=="re-querryid"){
             jlh.setShp("id",js.userid);
             dbg("onWsMessage id="+js.userid);
@@ -116,9 +118,24 @@ Ext.define('RunBus.controller.MainControl', {
                 //dbg("su st:"+js.status+" ["+js.index+"] d:"+js.dist+" p:"+js.speed);
                 busControl.updateServerStation(js);
             }
-        }else if(js.type='linechat'){
+        }else if(js.type=='linechat'){
             busControl.onChatMsg(js);
+        }else if(js.type=="re-getlines"){
+            var lines=js.res;
+            var linehtml="",allstations="";
+            var store=serverlinelist.getStore();
+            for(var i=0;i<lines.length;i++){
+                allstations="";
+                for(var j=0;j<lines[i].stations.length;j++){
+                    allstations+=(lines[i].stations[j].stname+",");
+                }
+                //store.add({line:lines[i].name,stations:allstations});
+                store.add({line:lines[i].name,stations:allstations,author:lines[i].ownerid,area:lines[i].area,shortarea:lines[i].shortarea,lineid:lines[i].lineid});
+            }
+
+        }else{
         }
+
     },
     onChatMsg:function(jsmsg){
         chartroot.add(Ext.create('Sin.ChatItem',{who:jsmsg.from,msg:jsmsg.msg,me:false,layout:{pack:'start'}}));
@@ -130,6 +147,7 @@ Ext.define('RunBus.controller.MainControl', {
     },
     getBusStations:function(){
         info=window.buss.getBusInfo();
+        if(!info) return;
         businfo= JSON.parse(info);
         //titlebar.removeAll(true,true);
         Ext.ComponentQuery.query("#idbusTitle")[0].setTitle(businfo.name);

@@ -20,7 +20,9 @@ Ext.define('RunBus.view.ServerList',{
                     {xtype: 'searchfield',placeHolder: 'Search',name: 'searchfield',flex:2,
                         listeners: {
                             keyup: function(who,e){
+                                if(e.browserEvent.which==229){
                                     Ext.Msg.alert("keyup event e="+e.browserEvent.which);
+                                }
                             },
                         },
                     },
@@ -41,7 +43,7 @@ Ext.define('RunBus.view.ServerList',{
 
             {
                 xtype: 'list',
-                flex:1,id: 'list', //must add flex:1 , other wise list will not show
+                flex:1,id: 'serverlinelist', //must add flex:1 , other wise list will not show
                 itemTpl: '<b>{line}</b><br> {stations}',
                 infinite: true,
                 useSimpleItems: true,
@@ -56,36 +58,36 @@ Ext.define('RunBus.view.ServerList',{
                                 xtype: 'actionsheet',
                                 centered:true,
                                 items: [
-                                    {
-                                        text: 'Delete',
-                                        ui  : 'decline'
+                                    {text: 'Delete',ui  : 'decline'
                                     },
-                                    {
-                                        text: 'Download'
+                                    {text: 'Download'
                                     },
-                                    {
-                                        text: 'Cancel',
-                                        ui  : 'confirm',
+                                    {text: 'Cancel',ui  : 'confirm',
                                         handler : function(){
-                                            //this.disable();
                                             this.getParent().hide();
                                         },
                                     }
                                 ]
                             });
                      }
+                     tmpLocalListRecord=record;
+                     var auth=record.get('author');
+                     console.log("DBG ServerList auth="+auth+",userId="+userId);
+                     if((auth==userId ) ){ this.action.getAt(0).show();}
+                     else this.action.getAt(0).hide();
+
                      this.action.show();
                  },
                 listeners: {
                     select: function(view, record) {
-                        Ext.Msg.alert('Selected!', 'You selected ' + record.get('line'));
+                        //Ext.Msg.alert('Selected!', 'You selected ' + record.get('line'));
                     }
                 },
                 store: {
                     fields: ['line', 'stations'],
                     sorters: 'line',
                     data: [
-                        { line: 'Greg',    stations: 'Barry' },
+                        //{ line: 'Greg',    stations: 'Barry' },
                     ],
 
                 },
@@ -100,6 +102,13 @@ Ext.define('RunBus.view.ServerList',{
 
     onActiveItemChange: function(carousel, newItem, oldItem) {
         Ext.Msg.alert("LocalList onActiveItemChange:");
+    },
+
+    onResume:function(){
+        var store=Ext.ComponentQuery.query("#idlocallist")[0].getStore();
+        store.removeAll();
+        serverliststore=store;
+        buss.sendMsg(JSON.stringify({"type":"getlines"}));
     },
         //var listConfiguration = this.getListConfiguration();
         //Ext.Viewport.add(listConfiguration);

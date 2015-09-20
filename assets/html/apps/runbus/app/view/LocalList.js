@@ -12,7 +12,10 @@ Ext.define('RunBus.view.LocalList',{
                         handler:function(){Ext.Viewport.setActiveItem(0);}
                     },
                     {xtype:'button',html:'>',ui:'action',align:'right',
-                        handler:function(){Ext.Viewport.setActiveItem(2);}
+                        handler:function(){
+                            Ext.Viewport.setActiveItem(2);
+                            Ext.Viewport.getActiveItem(2).onResume();
+                        }
                     },
                 ],
 

@@ -71,6 +71,7 @@ public class UserList extends Activity {
 
     public static final int MSG_WS_READY=1;
     public static final int MSG_GOBACK=2;
+    public static final int MSG_LOAD_ONWS_MSG=3;
 	private Handler mHandler = new Handler(){
         public void handleMessage(Message msg){
             Log.d("DBG","handleMessage what="+msg.what);
@@ -80,6 +81,9 @@ public class UserList extends Activity {
                 break;
             case MSG_WS_READY:
 				mWebView.loadUrl("javascript:onWsReady()");
+                break;
+            case MSG_LOAD_ONWS_MSG:
+                mWebView.loadUrl("javascript:onWsMessage('"+msg.obj+"')");
                 break;
 
             }
@@ -195,8 +199,11 @@ public class UserList extends Activity {
 	};
     WSMsgListener mwsListener=new WSMsgListener(){
         @Override
-        public void onMessage(String message) {
-            mWebView.loadUrl("javascript:onWsMessage('"+message+"')");
+        public void onMessage(String msg) {
+            Message message = new Message(); 
+            message.what = MSG_LOAD_ONWS_MSG; 
+            message.obj=msg;
+            mHandler.sendMessage(message); 
         }
     };
 
