@@ -44,13 +44,13 @@ Ext.define('RunBus.view.ServerList',{
             {
                 xtype: 'list',
                 flex:1,id: 'serverlinelist', //must add flex:1 , other wise list will not show
-                itemTpl: '<b>{line}</b><br> {stations}',
+                itemTpl: '<b>{area} {line}</b><br> {stations}',
                 infinite: true,
                 useSimpleItems: true,
                 variableHeights: true,
                 striped: true,
                 store: {
-                    fields: ['line', 'stations','jsline','author'],
+                    fields: ['line', 'stations','jsline','author','area'],
                     sorters: 'line',
                     data: [
                         //{ line: 'Greg',    stations: 'Barry' },
@@ -69,9 +69,8 @@ Ext.define('RunBus.view.ServerList',{
                                 items: [
                                     {text: 'Delete',ui  : 'decline',
                                         handler : function(){
-                                            serverliststore.remove([tSvRc])
                                             jlh.sendMsg(JSON.stringify({"type":"delline","lineid":tSvRc.get('jsline').lineid}));
-
+                                            serverliststore.remove([tSvRc])
                                             this.getParent().hide();
                                         },
                                     },

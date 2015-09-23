@@ -67,7 +67,7 @@ Ext.define('RunBus.view.LocalList',{
                                         handler : function(){
                                             var jsline=tLcRcd.get('jsline');
                                             var js={"type":"uploadLine","stations":jsline.stations,
-                                                "name":jsline.name,"ownerid":userId,"lver":jsline.lver,lineid:jsline.lineid,index:tLcRcd.lsIndex};
+                                                "name":jsline.name,"ownerid":userId,"lver":jsline.lver,lineid:jsline.lineid,index:tLcRcd.lsIndex,area:jsline.area};
                                             jlh.sendMsg(JSON.stringify(js));
                                             this.getParent().hide();
                                         },
@@ -136,11 +136,6 @@ Ext.define('RunBus.view.LocalList',{
                 stations+=l.stations[j].stname+",";
             }
             var shortarea=l.area;
-            if(shortarea){
-                if(shortarea.indexOf("区")!=-1){
-                    shortarea=shortarea.substring(0,shortarea.indexOf("区")+1);
-                }
-            }
             store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i,shortarea:shortarea,jsline:l});
         }
     },

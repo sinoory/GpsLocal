@@ -31,6 +31,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.JavascriptInterface;
@@ -273,6 +274,7 @@ public class UserList extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);//disable lock screen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.userlist);
         //SCRIPT_MARK.d(TAG,"onCreate");
         mImgMenu=(ImageView)findViewById(R.id.BubbleRightView);
@@ -453,7 +455,7 @@ public class UserList extends Activity {
     @Override
     protected void onResume() {
         if(sp.getString("selectlineChanged","false").equals("true")){
-            loadMainHtml();
+            //loadMainHtml();
             sp.edit().putString("selectlineChanged","false").commit();
         }
         app.registerListener(mwsListener);

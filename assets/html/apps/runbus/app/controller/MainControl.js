@@ -129,7 +129,7 @@ Ext.define('RunBus.controller.MainControl', {
                 for(var j=0;j<lines[i].stations.length;j++){
                     allstations+=(lines[i].stations[j].stname+",");
                 }
-                store.add({line:lines[i].name,stations:allstations,jsline:lines[i],author:lines[i].ownerid});
+                store.add({line:lines[i].name,stations:allstations,jsline:lines[i],author:lines[i].ownerid,area:lines[i].area});
             }
 
         }else if(js.type=="re-uploadLine"){
@@ -140,6 +140,7 @@ Ext.define('RunBus.controller.MainControl', {
                 jsline.linechanged=false;
                 jsline.ownerid=userId;
                 jsline.lineid=js.lineid;
+                jsline.area=js.area;
                 jlh.setShp(jsline.name,JSON.stringify(jsline));
             }else{
             }
