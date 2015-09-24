@@ -266,7 +266,7 @@ option.setPoiExtraInfo(true); //是否需要POI的电话和地址等详细信息
 
     public String mAddressStr=null;
   	public void showPopLocation(BDLocation location){
-        Log.d("DBG","showPopLocation");
+        Log.d("DBG","showPopLocation getAddrStr="+location.getAddrStr()+" city="+location.getCityCode()+" prov="+location.getProvince());
 			popupText.setBackgroundResource(R.drawable.popup);
 		popupText.setText("我的位置\n"+location.getAddrStr());
         mAddressStr=location.getAddrStr();

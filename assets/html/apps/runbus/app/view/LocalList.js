@@ -23,9 +23,9 @@ Ext.define('RunBus.view.LocalList',{
             {
                 xtype: 'list',
                 flex:1,id: 'idlocallist', //must add flex:1 , other wise list will not show
-                itemTpl: '<b>{author} {shortarea} {line}</b><br> {stations}',
+                itemTpl: '<b>{author} {area} {line}</b><br> {stations}',
                 store: {
-                    fields: ['line', 'stations','author','shortarea','index','jsline'],
+                    fields: ['line', 'stations','author','area','index','jsline'],
                     //sorters: 'line',
                     data: [
                     //{'line':'line','stations':'aa,bb,cc','author':'author'},
@@ -67,11 +67,22 @@ Ext.define('RunBus.view.LocalList',{
                                         handler : function(){
                                             var jsline=tLcRcd.get('jsline');
                                             var js={"type":"uploadLine","stations":jsline.stations,
-                                                "name":jsline.name,"ownerid":userId,"lver":jsline.lver,lineid:jsline.lineid,index:tLcRcd.lsIndex,area:jsline.area};
+                                                "name":jsline.name,"ownerid":userId,"lver":jsline.lver,lineid:jsline.lineid,index:tLcRcd.lsIndex,area:tLcRcd.get('area')};
                                             jlh.sendMsg(JSON.stringify(js));
                                             this.getParent().hide();
                                         },
                                     },
+                                    {text: 'SetArea',ui  : 'confirm',
+                                        handler : function(){
+                                            this.getParent().hide();
+                                            Ext.Msg.prompt('SetArea', '', function(btn,text) {
+                                                if(btn=='ok'){
+                                                    tLcRcd.set('area',text);
+                                                }
+                                            });
+                                        },
+                                    },
+
                                     {text: 'Cancel',ui  : 'confirm',
                                         handler : function(){
                                             //this.disable();
@@ -85,9 +96,12 @@ Ext.define('RunBus.view.LocalList',{
                      tLcRcd.lsIndex=index;
                      var auth=record.get('author');
                      console.log("DBG LocalList auth="+auth+",userId="+userId);
-                     if((auth==userId || !auth) && record.get('shortarea')){ 
-                         this.action.getAt(2).show();}
-                     else this.action.getAt(2).hide();
+                     if((auth==userId || !auth) && record.get('area')){ 
+                         this.action.getAt(2).show();
+                     }
+                     else{
+                         this.action.getAt(2).hide();
+                     }
 
                      this.action.show();
                 },
@@ -135,8 +149,7 @@ Ext.define('RunBus.view.LocalList',{
             for(var j=0;j< l.stations.length;j++){
                 stations+=l.stations[j].stname+",";
             }
-            var shortarea=l.area;
-            store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i,shortarea:shortarea,jsline:l});
+            store.add({line:lines[i],stations:stations,author:l.ownerid,area:l.area,index:i,area:l.area,jsline:l});
         }
     },
 
