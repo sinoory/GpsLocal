@@ -2,7 +2,7 @@ Ext.define('Sin.BusStation',{
     extend:'Ext.Container',
     config:{
         name:'name',
-        status:'next',//pass,in,next
+        status:'next',//pass,in,reaching,next
         index:0,
         flashColor:'yellow',
         layout:{
@@ -61,9 +61,13 @@ Ext.define('Sin.BusStation',{
         if(status=='in'){
             this.setFlashColor('yellow');
             var s=this;
-            this.flashtimer=setInterval(function(){s.flashCircle();},1000);
+            this.flashtimer=setInterval(function(){s.flashCircle();},500);
             this.enterTime=new Date().getTime();
             Ext.ComponentQuery.query("#idEntTime"+index)[0].setHtml(this.enterTime);
+        }else if(status=='to'){
+            this.setFlashColor('Cyan');
+            var s=this;
+            this.flashtimer=setInterval(function(){s.flashCircle();},1000);
         }else if(status=='next'){
             this.drawCircle("blue");
         }else{
@@ -85,10 +89,16 @@ Ext.define('Sin.BusStation',{
         if(this.getStatus()=='in'){
             this.drawCircle(this.getFlashColor());
             if(this.getFlashColor()=='yellow'){
-                console.log("flashColor change color to blue");
-                this.setFlashColor('blue');
+                this.setFlashColor('DarkGoldenRod');
             }else{
                 this.setFlashColor('yellow');
+            }
+        }else if(this.getStatus()=='to'){
+            this.drawCircle(this.getFlashColor());
+            if(this.getFlashColor()=='Cyan'){
+                this.setFlashColor('DarkCyan');
+            }else{
+                this.setFlashColor('Cyan');
             }
         }else if(this.getStatus()=='next'){
             this.drawCircle("blue");

@@ -16,15 +16,31 @@ Ext.define('RunBus.controller.TestMain', {
         titlebar.add(watchbtn);
         watchbtn.setHtml("unwatch");
         watchbtn.on('tap',function(){
+            this.testRuning();
             //Ext.Viewport.setActiveItem(1);
-            runningbus.removeAll();
-            chartroot.removeAll(true,true);
-            titlebar.removeAll(true,true);
+            //runningbus.removeAll();
+            //chartroot.removeAll(true,true);
+            //titlebar.removeAll(true,true);
         });
         this.initWindow();
         window.testmain=this;
 
     },
+
+    testRuning:function(){
+        if(!this.mCurrIndex){
+            this.mCurrIndex=0;
+            runningbus.setStationStatus(this.mCurrIndex,'in');
+            this.CurrStatusIn=true;;
+        }else{
+            if(this.CurrStatusIn){
+                runningbus.setStationStatus(this.mCurrIndex,'pass');
+                this.mCurrIndex++;
+                runningbus.setStationStatus(this.mCurrIndex,'pass');
+            }
+        }
+    },
+    
 
     initWindow:function(){
         window.busControl=this;
@@ -49,7 +65,7 @@ Ext.define('RunBus.controller.TestMain', {
         runningbus.add({name:'movie',status:'next',index:2});
         runningbus.add({name:'house',status:'next',index:3});
 
-        //runningbus.setStationStatus(2,'in');
+        runningbus.setStationStatus(2,'to');
         busroot.hide=false;
 
     },

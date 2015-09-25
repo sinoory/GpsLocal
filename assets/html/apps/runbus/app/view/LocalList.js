@@ -136,11 +136,17 @@ Ext.define('RunBus.view.LocalList',{
         for(var i=0;i<lines.length;i++){
             dbg("lines["+i+"]="+lines[i]);
             if(!lines[i]){
+                locallines.splice(i,1);
+                jlh.setShp("alllines",locallines.join(","));
+                i--;
                 continue;
             }
             var ln=jlh.getShp(lines[i]);
             if(!ln || ln=="undefined"){
                 dbg(lines[i]+" no detail info exist");
+                locallines.splice(i,1);
+                jlh.setShp("alllines",locallines.join(","));
+                i--;
                 continue;
             }
             var l=JSON.parse(ln);

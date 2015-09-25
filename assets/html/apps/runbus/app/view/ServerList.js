@@ -79,12 +79,12 @@ Ext.define('RunBus.view.ServerList',{
 
                                             var l=tSvRc.get("jsline");
                                             var rcd={line:tSvRc.get('line'),stations:tSvRc.get('stations'),author:l.ownerid,area:l.area,index:locallines.length,shortarea:l.shortarea,jsline:l};
-                                            //console.log("download:"+JSON.stringify(rcd));
 
                                             localliststore.add(rcd);
-                                            jlh.setShp(tSvRc.get('line'),JSON.stringify(tSvRc.jsline));
+                                            jlh.setShp(tSvRc.get('line'),JSON.stringify(tSvRc.get('jsline')));
                                             locallines.push(tSvRc.get('line'));
                                             jlh.setShp("alllines",locallines.join(","));
+                                            //console.log("download "+tSvRc.get('line')+" :"+JSON.stringify(tSvRc.get('jsline')));
                                             this.getParent().hide();
 
                                         },
