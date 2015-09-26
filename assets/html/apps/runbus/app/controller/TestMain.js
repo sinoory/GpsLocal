@@ -15,8 +15,9 @@ Ext.define('RunBus.controller.TestMain', {
         watchbtn=Ext.create('Ext.Button',{html:'Watch',ui:'action',align:'right',});
         titlebar.add(watchbtn);
         watchbtn.setHtml("unwatch");
+        var self=this;
         watchbtn.on('tap',function(){
-            this.testRuning();
+            self.testRuning();
             //Ext.Viewport.setActiveItem(1);
             //runningbus.removeAll();
             //chartroot.removeAll(true,true);
@@ -28,16 +29,12 @@ Ext.define('RunBus.controller.TestMain', {
     },
 
     testRuning:function(){
-        if(!this.mCurrIndex){
-            this.mCurrIndex=0;
-            runningbus.setStationStatus(this.mCurrIndex,'in');
-            this.CurrStatusIn=true;;
+        console.log("testRuning "+this.busStarted);
+        if(this.busStarted){
+            console.log("testRuning res="+runningbus.nextStatus());
         }else{
-            if(this.CurrStatusIn){
-                runningbus.setStationStatus(this.mCurrIndex,'pass');
-                this.mCurrIndex++;
-                runningbus.setStationStatus(this.mCurrIndex,'pass');
-            }
+            this.busStarted=true;
+            runningbus.startBus(0);
         }
     },
     
@@ -60,12 +57,12 @@ Ext.define('RunBus.controller.TestMain', {
 
         runningbus=new Sin.RunningBus('#idbus');
         runningbus.setStationcnt(4);
-        runningbus.add({name:'company',status:'in',index:0});
+        runningbus.add({name:'company',status:'next',index:0});
         runningbus.add({name:'shop',status:'next',index:1});
         runningbus.add({name:'movie',status:'next',index:2});
         runningbus.add({name:'house',status:'next',index:3});
 
-        runningbus.setStationStatus(2,'to');
+        //runningbus.setStationStatus(2,'to');
         busroot.hide=false;
 
     },

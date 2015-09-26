@@ -63,7 +63,6 @@ Ext.define('Sin.BusStation',{
             var s=this;
             this.flashtimer=setInterval(function(){s.flashCircle();},500);
             this.enterTime=new Date().getTime();
-            Ext.ComponentQuery.query("#idEntTime"+index)[0].setHtml(this.enterTime);
         }else if(status=='to'){
             this.setFlashColor('Cyan');
             var s=this;
@@ -85,7 +84,7 @@ Ext.define('Sin.BusStation',{
         context.fill();
     },
     flashCircle:function(){
-        console.log("in flashCircle color="+this.getFlashColor()+", status="+this.getStatus());
+        //console.log("in flashCircle color="+this.getFlashColor()+", status="+this.getStatus());
         if(this.getStatus()=='in'){
             this.drawCircle(this.getFlashColor());
             if(this.getFlashColor()=='yellow'){
@@ -107,7 +106,10 @@ Ext.define('Sin.BusStation',{
             this.drawCircle("red");
             clearInterval(this.flashtimer);
         }
-    }
+    },
+    stopFlash:function(){
+        clearInterval(this.flashtimer);
+    },
 
 
 });
@@ -154,8 +156,8 @@ Ext.define('Sin.BusEndStation',{
 Ext.define('Sin.RunningBus', {
     config:{
         stationcnt:0,
-        runningStation:-1,
-        runningstatus:'next',//leave,in,next
+        currentStation:-1,
+        currentStatus:'next',//in,to,next,pass
     },
     constructor:function(mainid){
         this.main=Ext.ComponentQuery.query(mainid)[0];
@@ -175,7 +177,44 @@ Ext.define('Sin.RunningBus', {
         s.initStatus();
     },
     setStationStatus:function(index,status){
+        if(this.getCurrentStatus()=='in' || this.getCurrentStatus()=='to'){
+            this.stations[this.getCurrentStation()].stopFlash();
+        }
+        if(this.getCurrentStation()!=-1 && this.getCurrentStation()!=index){
+            this.stations[this.getCurrentStation()].setBusStatus('pass');
+        }
+
         this.stations[index].setBusStatus(status);
+        this.setCurrentStation(index);
+        this.setCurrentStatus(status);
+    },
+    startBus:function(index){
+        this.stations[index].setBusStatus('in');
+        this.setCurrentStation(index);
+        this.setCurrentStatus('in');
+    },
+    nextStatus:function(){
+        var curstatus=this.getCurrentStatus();
+        var curindex=this.getCurrentStation();
+        if(curstatus=='in'){
+            this.stations[curindex].stopFlash();
+            this.stations[curindex].setBusStatus('pass');
+            if(curindex==this.getStationcnt()-1){
+                return "finished"
+            }
+            this.stations[++curindex].setBusStatus('to');
+            this.setCurrentStatus('to');
+            this.setCurrentStation(curindex);
+        }else if(curstatus=='to'){
+            this.stations[curindex].stopFlash();
+            this.stations[curindex].setBusStatus('in');
+            this.setCurrentStatus('in');
+        }else{
+            return "unreachable";
+            console.log("XXXX nextStatus curindex="+curindex+",curstatus="+curstatus);
+        }
+        return "running";
+
     },
     setEnterTime:function(index,time){
         Ext.ComponentQuery.query("#idEntTime"+index)[0].setHtml(time);
