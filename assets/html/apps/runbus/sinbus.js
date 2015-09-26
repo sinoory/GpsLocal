@@ -154,12 +154,12 @@ Ext.define('Sin.BusEndStation',{
 
 
 Ext.define('Sin.RunningBus', {
-    config:{
-        stationcnt:0,
-        currentStation:-1,
-        currentStatus:'next',//in,to,next,pass
-    },
     constructor:function(mainid){
+        this.currentStatus='next';
+        this.currentIndex=0;
+        this.stationCnt=0;
+        this.test='testval';
+
         this.main=Ext.ComponentQuery.query(mainid)[0];
         if(!this.main){
             alert("Err , "+mainid+" not found");
@@ -168,7 +168,7 @@ Ext.define('Sin.RunningBus', {
     },
     add:function(station){
         var type=(station.index==0)?'Sin.BusStartStation':
-                (station.index==this.getStationcnt()-1?'Sin.BusEndStation':'Sin.BusStation');
+                (station.index==this.stationcnt-1?'Sin.BusEndStation':'Sin.BusStation');
         var s=Ext.create(type,station);
         this.main.add(s);
         this.stations.push(s);
@@ -176,42 +176,44 @@ Ext.define('Sin.RunningBus', {
         s.ctx=s.canvas.getContext("2d");
         s.initStatus();
     },
+
+    //for watcher
     setStationStatus:function(index,status){
-        if(this.getCurrentStatus()=='in' || this.getCurrentStatus()=='to'){
-            this.stations[this.getCurrentStation()].stopFlash();
-        }
-        if(this.getCurrentStation()!=-1 && this.getCurrentStation()!=index){
-            this.stations[this.getCurrentStation()].setBusStatus('pass');
+        console.log("setStationStatus ["+this.currentIndex+"]="+this.currentStatus+",test="+this.test);
+
+        this.stations[this.currentIndex].stopFlash();
+        for(var j=this.currentIndex;j<index;j++){
+            this.stations[j].setBusStatus('pass');
         }
 
         this.stations[index].setBusStatus(status);
-        this.setCurrentStation(index);
-        this.setCurrentStatus(status);
+        this.currentStatus=status;
+        this.currentIndex=(index);
+
     },
+
+    //for driver
     startBus:function(index){
         this.stations[index].setBusStatus('in');
-        this.setCurrentStation(index);
-        this.setCurrentStatus('in');
+        this.currentIndex=(index);
+        this.currentStatus=('in');
     },
     nextStatus:function(){
-        var curstatus=this.getCurrentStatus();
-        var curindex=this.getCurrentStation();
-        if(curstatus=='in'){
-            this.stations[curindex].stopFlash();
-            this.stations[curindex].setBusStatus('pass');
-            if(curindex==this.getStationcnt()-1){
+        if(this.currentStatus=='in'){
+            this.stations[this.currentIndex].stopFlash();
+            this.stations[this.currentIndex].setBusStatus('pass');
+            if(this.currentIndex==this.stationcnt-1){
                 return "finished"
             }
-            this.stations[++curindex].setBusStatus('to');
-            this.setCurrentStatus('to');
-            this.setCurrentStation(curindex);
-        }else if(curstatus=='to'){
-            this.stations[curindex].stopFlash();
-            this.stations[curindex].setBusStatus('in');
-            this.setCurrentStatus('in');
+            this.stations[++this.currentIndex].setBusStatus('to');
+            this.currentStatus=('to');
+        }else if(this.currentStatus=='to'){
+            this.stations[this.currentIndex].stopFlash();
+            this.stations[this.currentIndex].setBusStatus('in');
+            this.currentStatus=('in');
         }else{
             return "unreachable";
-            console.log("XXXX nextStatus curindex="+curindex+",curstatus="+curstatus);
+            console.log("XXXX nextStatus this.currentIndex="+this.currentIndex+",this.currentStatus="+this.currentStatus);
         }
         return "running";
 

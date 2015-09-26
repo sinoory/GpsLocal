@@ -56,13 +56,13 @@ Ext.define('RunBus.controller.TestMain', {
         }
 
         runningbus=new Sin.RunningBus('#idbus');
-        runningbus.setStationcnt(4);
+        runningbus.stationcnt=(4);
         runningbus.add({name:'company',status:'next',index:0});
         runningbus.add({name:'shop',status:'next',index:1});
         runningbus.add({name:'movie',status:'next',index:2});
         runningbus.add({name:'house',status:'next',index:3});
 
-        //runningbus.setStationStatus(2,'to');
+        runningbus.setStationStatus(1,'in');
         busroot.hide=false;
 
     },
