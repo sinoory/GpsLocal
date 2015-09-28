@@ -11,7 +11,12 @@ Ext.define('RunBus.view.Runningbus',{
             {
                 xtype: 'container',flex:1,id:'idbus',
                 style : "border-style: solid;",
-                scrollable: {direction: 'vertical',directionLock: true},
+                layout:{
+                    type:'hbox',
+                },
+
+                scrollable: {direction: 'horizontal',directionLock: true},
+                //scrollable: {direction: 'vertical',directionLock: true},
             },
             {
                 xtype: 'titlebar',title: 'bus infomations',titleAlign:'left',id:'idbusinfo',

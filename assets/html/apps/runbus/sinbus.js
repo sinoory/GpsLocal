@@ -1,4 +1,4 @@
-Ext.define('Sin.BusStation',{
+Ext.define('Sin.AbsBusStation',{
     extend:'Ext.Container',
     config:{
         name:'name',
@@ -6,24 +6,8 @@ Ext.define('Sin.BusStation',{
         index:0,
         flashColor:'yellow',
         layout:{
-            type:'hbox',
+            type:'vbox',
         },
-    },
-    constructor:function(index){
-        this.callParent(arguments);
-        this.indictor=Ext.create('Ext.Container',{html:"<canvas id='canv"+this.getIndex()+"' width='20' height='20'></canvas>"});
-        this.add(this.indictor);
-        this.stlable=Ext.create('Ext.Container',{html:"<b>"+this.getName()+"</b>&nbsp;<span id='idEntTime'"+index+"></span>",maxHeight:'20px',align:'right'});
-        this.add(this.stlable);
-        /*
-        if(this.getStatus()=='next'){
-            this.stlable.element.setStyle("background-color","blue");
-        }else if(this.getStatus()=='in'){
-            this.stlable.element.setStyle("background-color","yellow");
-        }else{
-            this.stlable.element.setStyle("background-color","red");
-        }
-        */
     },
     initStatus:function(){
         var context = this.ctx;
@@ -113,27 +97,41 @@ Ext.define('Sin.BusStation',{
 
 
 });
-Ext.define('Sin.BusStartStation',{
-    extend:'Sin.BusStation',
-    initStatus:function(){
-        var context = this.ctx;
-        var cw = this.canvas.width;
-        var ch = this.canvas.height;
 
-        context.lineWidth = 2;
-        context.strokeStyle = 'black';
+Ext.define('Sin.BusStation',{
+    extend:'Sin.AbsBusStation',
+    config:{
+        layout:{
+            type:'hbox',
+        },
+    },
 
-        context.moveTo(cw/2,cw/2);
-        context.lineTo(cw/2,ch);
-        context.stroke();
-
-        this.drawCircle("blue");
+    constructor:function(index){
+        this.callParent(arguments);
+        this.indictor=Ext.create('Ext.Container',{html:"<canvas id='canv"+this.getIndex()+"' width='20' height='20'></canvas>"});
+        this.add(this.indictor);
+        this.stlable=Ext.create('Ext.Container',{html:"<b>"+this.getName()+"</b>&nbsp;<span id='idEntTime'"+index+"></span>",maxHeight:'20px',align:'right'});
+        this.add(this.stlable);
     },
 
 });
 
-Ext.define('Sin.BusEndStation',{
-    extend:'Sin.BusStation',
+Ext.define('Sin.HBusStation',{
+    extend:'Sin.AbsBusStation',
+    config:{
+        layout:{
+            type:'vbox',
+            align:'center',//let the station text align center
+        },
+    },
+
+    constructor:function(index){
+        this.callParent(arguments);
+        this.indictor=Ext.create('Ext.Container',{html:"<canvas id='canv"+this.getIndex()+"' width='100' height='20'></canvas>"});
+        this.add(this.indictor);
+        this.stlable=Ext.create('Ext.Container',{html:"<b>"+this.getName()+"</b>",maxHeight:'20px',align:'center'});
+        this.add(this.stlable);
+    },
     initStatus:function(){
         var context = this.ctx;
         var cw = this.canvas.width;
@@ -143,7 +141,51 @@ Ext.define('Sin.BusEndStation',{
         context.lineWidth = 2;
         context.strokeStyle = 'black';
 
-        context.moveTo(cw/2,0);
+        context.moveTo(0,ch/2);
+        context.lineTo(cw,ch/2);
+        context.stroke();
+
+        context.fillStyle="blue";
+        context.beginPath();
+        context.arc(cw/2,ch/2,5,0,Math.PI*2,true);
+        context.closePath();
+        context.fill();
+    },
+
+});
+
+Ext.define('Sin.HBusStartStation',{
+    extend:'Sin.HBusStation',
+    initStatus:function(){
+        var context = this.ctx;
+        var cw = this.canvas.width;
+        var ch = this.canvas.height;
+
+        context.lineWidth = 2;
+        context.strokeStyle = 'black';
+
+        console.log("Sin.HBusStartStation ",cw,ch);
+        context.moveTo(cw/2,ch/2);
+        context.lineTo(cw,ch/2);
+        context.stroke();
+
+        this.drawCircle("blue");
+    },
+
+});
+
+Ext.define('Sin.HBusEndStation',{
+    extend:'Sin.HBusStation',
+    initStatus:function(){
+        var context = this.ctx;
+        var cw = this.canvas.width;
+        var ch = this.canvas.height;
+
+        console.log(cw,ch);
+        context.lineWidth = 2;
+        context.strokeStyle = 'black';
+
+        context.moveTo(0,ch/2);
         context.lineTo(cw/2,ch/2);
         context.stroke();
 
@@ -167,8 +209,8 @@ Ext.define('Sin.RunningBus', {
         this.stations=new Array();
     },
     add:function(station){
-        var type=(station.index==0)?'Sin.BusStartStation':
-                (station.index==this.stationcnt-1?'Sin.BusEndStation':'Sin.BusStation');
+        var type=(station.index==0)?'Sin.HBusStartStation':
+                (station.index==this.stationcnt-1?'Sin.HBusEndStation':'Sin.HBusStation');
         var s=Ext.create(type,station);
         this.main.add(s);
         this.stations.push(s);
