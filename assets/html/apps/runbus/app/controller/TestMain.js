@@ -34,7 +34,7 @@ Ext.define('RunBus.controller.TestMain', {
             console.log("testRuning res="+runningbus.nextStatus());
         }else{
             this.busStarted=true;
-            runningbus.startBus(0);
+            runningbus.startBus(1);
         }
     },
     
@@ -62,7 +62,7 @@ Ext.define('RunBus.controller.TestMain', {
         runningbus.add({name:'movie',status:'next',index:2});
         runningbus.add({name:'house',status:'next',index:3});
 
-        runningbus.setStationStatus(1,'in');
+        //runningbus.setStationStatus(1,'in');
         busroot.hide=false;
 
     },

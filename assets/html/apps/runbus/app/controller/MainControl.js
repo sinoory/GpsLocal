@@ -49,14 +49,16 @@ Ext.define('RunBus.controller.MainControl', {
     },
 
     initWindow:function(){
+        var self=this;
         window.busControl=this;
         window.dbg=function(msg){
-            //busControl.showLocalMsg(msg);
-            console.log("DBG "+msg);
+            busControl.showLocalMsg(msg);
+            //console.log("DBG "+msg);
             //Ext.Msg.alert(msg);
         };
         window.onGpsPos=function(loc){
-            mLatestLoc=JSON.parse(loc);
+            self.mLatestLoc=JSON.parse(loc);
+            self.updateStaion();
         };
         dbg('onGspPos 1 setted');
         window.onWsReady=this.onWsReady;
@@ -111,7 +113,7 @@ Ext.define('RunBus.controller.MainControl', {
             }
             busControl.reportOnline(js.userid);
         }else if(js.type=='runbus'){//forward from server
-            if(mStartBus) return ;//start by myself,so ignore server msg
+            if(this.mStartBus) return ;//start by myself,so ignore server msg
             if(js.action=='start'){
                 busControl.onStartLine(js);
             }else if(js.action=='stUpdate'){
@@ -164,19 +166,23 @@ Ext.define('RunBus.controller.MainControl', {
         //titlebar.removeAll(true,true);
         Ext.ComponentQuery.query("#idbusTitle")[0].setTitle(businfo.name);
         if(titlebar.btn) titlebar.remove(titlebar.btn);
-        runningbus.setStationcnt(businfo.stations.length);
+        runningbus.stationcnt=(businfo.stations.length);
         runningbus.removeAll();
         for(var i=0;i<businfo.stations.length;i++){
-            runningbus.add({name:businfo.stations[i].stname,status:'in',index:i});
+            runningbus.add({name:businfo.stations[i].stname,status:'next',index:i});
         }
+        var self=this;
         if(!businfo.ownerid || businfo.ownerid==jlh.getShp("id")){
             startbtn=Ext.create('Ext.Button',{html:'Start',ui:'action',align:'right',});
             startbtn.start=false;
             startbtn.on('tap',function(){
                 startbtn.start=!startbtn.start;
                 startbtn.setHtml(startbtn.start?'Stop':'Start');
+                console.log("startbtn.ontap startbtn.start="+startbtn.start);
                 if(startbtn.start){
-
+                    self.start_();
+                }else{
+                    self.stop_();
                 }
             });
             titlebar.add(startbtn);
@@ -193,28 +199,30 @@ Ext.define('RunBus.controller.MainControl', {
         }
 
     },
+    toRad:function(d) {  return d * Math.PI / 180; },
     getDisance:function(lat1, lng1, lat2, lng2) { //lat为纬度, lng为经度, 一定不要弄错
         //dbg("gd ["+lat1+","+lng1+"]->["+lat2+","+lng2+"]");
         var dis = 0;
-        var radLat1 = toRad(lat1);
-        var radLat2 = toRad(lat2);
+        var radLat1 = this.toRad(lat1);
+        var radLat2 = this.toRad(lat2);
         var deltaLat = radLat1 - radLat2;
-        var deltaLng = toRad(lng1) - toRad(lng2);
+        var deltaLng = this.toRad(lng1) - this.toRad(lng2);
         var dis = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(deltaLng / 2), 2)));
         return parseInt(dis * 6378137);
     },
 
     start_:function(){
         var ls=businfo.stations;
-        if(!mLatestLoc){
+        console.log("start_  ls.length="+ls.length+">>>");
+        if(!this.mLatestLoc){
             dbg("no Gps!!");
             return;
         }
-        mStartLoc=(mLatestLoc);
+        mStartLoc=(this.mLatestLoc);
         var dist=MIN_IN_STATION_DIST;
         var closestInd=-1,closestDist=-1;
         for(var i=0;i<ls.length;i++){
-            var thisdist=(getDisance(mStartLoc.la,mStartLoc.lo,ls[i].la,ls[i].lo));
+            var thisdist=(this.getDisance(mStartLoc.la,mStartLoc.lo,ls[i].la,ls[i].lo));
             dbg("thisdist from "+ls[i].stname+"="+thisdist);
             if(closestDist==-1 || thisdist<closestDist){
                 closestDist=thisdist;
@@ -224,22 +232,23 @@ Ext.define('RunBus.controller.MainControl', {
         if(closestDist<=MIN_IN_STATION_DIST){
             mCurrStationIndex=closestInd;
             mNextSationIndex=mCurrStationIndex+1;
-            mStartBus=true;
-            runningbus.setStationStatus(mCurrStationIndex,'in');
+            this.mStartBus=true;
+            runningbus.startBus(closestInd);
         }else{
             this.showBusInfo(closestDist+"m too far from "+ls[closestInd].stname);
         }
 
-        if(mStartBus){
+        if(this.mStartBus){
             dbg("get start station "+ls[mCurrStationIndex].stname);
-            for(var i=0;i<mCurrStationIndex;i++){
-                runningbus.setStationStatus(i,'pass');
-            }
             this.sendBusStatus({"type":"runbus","action":"start","ownerid":userId,"lineid":businfo.lineid,"startInd":mCurrStationIndex,"stationCnt":ls.length});
-            updateStaion();
+            this.updateStaion();
         }else{
             this.showBusInfo("too far from any station");
         }
+    },
+    stop_:function(){
+        this.mStartBus=false;
+        runningbus.stopBus();
     },
     getHMS:function(timstap){
         var ts=new Date(timstap);
@@ -247,40 +256,40 @@ Ext.define('RunBus.controller.MainControl', {
     },
 
     updateStaion:function(){//in station : yellow ; left staion : green , done station : red
-        if(!mStartBus){
+        if(!this.mStartBus){
             return;
         }
         dbg("u: cur="+mCurrStationIndex+",next="+mNextSationIndex);
         var ls=businfo.stations,dist,nextStationIndex,speedDistIndex,isIn,thisdist="";
         var tm=new Date().getTime();
         if(mCurrStationIndex>=0){
-            thisdist=(this.getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mCurrStationIndex].la,ls[mCurrStationIndex].lo));
+            thisdist=(this.getDisance(this.mLatestLoc.la,this.mLatestLoc.lo,ls[mCurrStationIndex].la,ls[mCurrStationIndex].lo));
             dbg("u:c: dist from cur "+ls[mCurrStationIndex].stname+" = "+thisdist);
             if(thisdist>MIN_IN_STATION_DIST){//leave curr
-                runningbus.setStationStatus(mCurrStationIndex,'pass');
+                runningbus.nextStatus();
                 mNextSationIndex=mCurrStationIndex+1;
                 mCurrStationIndex=-1;
 
-                thisdist=(this.getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
-                this.updateDistSpeed(mNextSationIndex,thisdist,"next");
+                thisdist=(this.getDisance(this.mLatestLoc.la,this.mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
+                this.updateDistSpeed(mNextSationIndex,thisdist,"to");
             }else{
                 this.updateDistSpeed(mCurrStationIndex,thisdist,"in");
             }
         }else if(mNextSationIndex>0 && mNextSationIndex<ls.length){
-            thisdist=(this.getDisance(mLatestLoc.la,mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
+            thisdist=(this.getDisance(this.mLatestLoc.la,this.mLatestLoc.lo,ls[mNextSationIndex].la,ls[mNextSationIndex].lo));
             dbg("u:n: dist from next "+ls[mNextSationIndex].stname+" = "+thisdist+",tm="+getHMS(tm));
             isIn=thisdist<=MIN_IN_STATION_DIST;
-            this.updateDistSpeed(mNextSationIndex,thisdist,isIn?"in":"next");
+            this.updateDistSpeed(mNextSationIndex,thisdist,isIn?"in":"to");
             if(isIn){//enter next
                 mCurrStationIndex=mNextSationIndex;
                 mNextSationIndex++;
-                runningbus.setStationStatus(mCurrStationIndex,'in');
+                runningbus.nextStatus();
             }
         }
 
     },
     updateDistSpeed:function(speedDistIndex,dist,status){
-        var speed= mLatestLoc.speed || 0;
+        var speed= this.mLatestLoc.speed || 0;
         this.showBusInfo(dist+"m "+speed+"m/s");
         this.sendBusStatus({"type":"runbus","action":"stUpdate","lineid":businfo.lineid,"status":status,"index":speedDistIndex,"speed":speed,"dist":dist});
     },

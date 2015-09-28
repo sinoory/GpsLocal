@@ -194,9 +194,20 @@ Ext.define('Sin.RunningBus', {
 
     //for driver
     startBus:function(index){
-        this.stations[index].setBusStatus('in');
+        console.log("startBus from "+index+", total="+this.stationcnt);
+        for(var j=0;j<this.stationcnt;j++){
+            var st=j<index?'pass':(j>index?'next':'in')
+            this.stations[j].setBusStatus(st);
+        }
         this.currentIndex=(index);
         this.currentStatus=('in');
+    },
+    stopBus:function(){
+        this.stations[this.currentIndex].stopFlash();
+        for(var j=0;j<this.stationcnt;j++){
+            this.stations[j].setBusStatus('next');
+        }
+
     },
     nextStatus:function(){
         if(this.currentStatus=='in'){
