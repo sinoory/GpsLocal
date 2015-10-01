@@ -47,6 +47,10 @@ Ext.define('RunBus.controller.TestMain', {
         };
     },
 
+
+    showGuild:function(){
+    },
+
     testui:function(){
         chartroot.add(Ext.create('Sin.ChatItem',{who:'who',msg:'this real msg'}));
         for(var i=0;i<10;i++){

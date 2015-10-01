@@ -10,7 +10,6 @@ Ext.define('RunBus.view.Runningbus',{
             },
             {
                 xtype: 'container',flex:1,id:'idbus',
-                style : "border-style: solid;",
                 layout:{
                     type:'hbox',
                 },
@@ -19,28 +18,39 @@ Ext.define('RunBus.view.Runningbus',{
                 //scrollable: {direction: 'vertical',directionLock: true},
             },
             {
-                xtype: 'titlebar',title: 'bus infomations',titleAlign:'left',id:'idbusinfo',
+                xtype:'label',flex:1,
+                html:'label',
+            },
+            {
+                xtype: 'container',
+                id:'idinfo',
+                layout:{type:'hbox',align:'center',},
                 items:[
-                    {xtype:'button',html:'*',ui:'action',align:'right',
+                    {xtype:'spacer'},
+                    {xtype:'button',html:'查找班车',ui:'action',align:'center',iconCls: 'search',
                         handler:function(){
                             Ext.Viewport.setActiveItem(1);
                             Ext.Viewport.getActiveItem(1).onResume();
                         }
                     },
-                    {xtype:'button',html:'-',ui:'action',align:'right',id:'idshowbus',},
+                    {xtype:'spacer'},
+                    {xtype:'button',html:'创建班车',ui:'action',align:'center',iconCls:'add',},
+                    {xtype:'spacer'},
                 ],
+
             },
             {
-                xtype: 'container',id:'idchat',flex:1,
-                style : "border-style: solid;",
+                xtype: 'container',id:'idchat',flex:2,
+                style : "border-style: solid;border-width: 3px 0px 0px 0px;",
                 scrollable: {direction: 'vertical',directionLock: true},
             },
             {
                 xtype: 'container',
                 layout: 'hbox',
-                style : "border-style: solid;border-radius: 1px",
+                //style : "border-style: solid;border-radius: 1px",
                 items: [
-                    {xtype: 'textfield',name : 'name',flex:5,id:'idmsg'},
+                    {xtype: 'textfield',name : 'name',flex:5,id:'idmsg',
+                        style : "border-style: solid;border-radius: 10px"},
                     {xtype:'button',html:'Send',ui: 'action',flex:1,id:'idsend',},
                 ],    
 

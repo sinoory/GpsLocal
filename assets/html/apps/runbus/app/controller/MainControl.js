@@ -24,8 +24,6 @@ Ext.define('RunBus.controller.MainControl', {
     },
 
     initEvn:function(){
-        showhidebtn=Ext.ComponentQuery.query("#idshowbus")[0];
-        showhidebtn.on('tap',this.showHideBus);
         sendbtn=Ext.ComponentQuery.query("#idsend")[0];
         sendbtn.on('tap',this.sendMsg);
     },
