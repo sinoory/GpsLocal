@@ -5,25 +5,26 @@ Ext.application({
     //controllers: ['MainControl'],
     controllers: ['TestMain'],
     views:['LocalList','ServerList','Runningbus','Testview'],
+    /*
     viewport : {
         layout : {
             type      : 'card',
             animation : 'flip'
         }
     },
+    */
     launch: function() {   
         //Ext.create('RunBus.view.Runningbus');
         //Ext.create('RunBus.view.LocalList');
+        /*
         Ext.Viewport.add([
                 {xtype:'tpRunningbus'},
                 {xtype:'tpLocalList'},
                 {xtype:'tpServerList'},
                 {xtype:'testview'},
         ]);
+        */
         /*
-        setTimeout(function() {
-            Ext.Viewport.setActiveItem(1);
-        }, 2000);
         MainUi=new Ext.Panel({
             fullscreen: true,
             layout: 'card',
@@ -36,5 +37,20 @@ Ext.application({
         });
         MainUi.setActiveItem(1);
         */
-    },
+
+        Ext.create('Ext.TabPanel', {
+            fullscreen: true,
+            tabBarPosition: 'bottom',
+
+            defaults: {
+                styleHtmlContent: true
+            },
+
+            items: [
+                {xtype:'tpRunningbus'},
+                {xtype:'tpLocalList'},
+                {xtype:'tpServerList'},
+            ]
+        });
+    }
 });

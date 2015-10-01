@@ -2,8 +2,10 @@ Ext.define('RunBus.view.Runningbus',{
     xtype:'tpRunningbus',
     extend:'Ext.Container',
     config: {
-        fullscreen: true,
+        //fullscreen: true,
         layout:'vbox', //TODO:impotant , otherwise the list can'b show
+        title: '主页', //if want add to tabPanel,must add title & iconCls & not fullscrren
+        iconCls: 'home',
         items: [
             {
                 xtype: 'titlebar',title:'BUS',id:'idbusTitle',

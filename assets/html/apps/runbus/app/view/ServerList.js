@@ -2,8 +2,10 @@ Ext.define('RunBus.view.ServerList',{
     xtype:'tpServerList',
     extend:'Ext.Container',
     config: {
-        fullscreen: true,
+        //fullscreen: true,
         layout:'vbox', //TODO:impotant , otherwise the list can'b show
+        title: '查找', //if want add to tabPanel,must add title & iconCls & not fullscrren
+        iconCls: 'search',
         items: [
             {
                 xtype: 'titlebar',title:'Server Lines',
