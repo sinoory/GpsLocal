@@ -2,8 +2,8 @@
 Ext.application({
     name: 'RunBus',
     //
-    //controllers: ['MainControl'],
-    controllers: ['TestMain'],
+    controllers: ['MainControl'],
+    //controllers: ['TestMain'],
     views:['LocalList','ServerList','Runningbus','Testview'],
     /*
     viewport : {
@@ -38,7 +38,8 @@ Ext.application({
         MainUi.setActiveItem(1);
         */
 
-        Ext.create('Ext.TabPanel', {
+        //Ext.create('Ext.TabPanel', {
+        Ext.create('Ext.tab.Panel', {
             fullscreen: true,
             tabBarPosition: 'bottom',
 

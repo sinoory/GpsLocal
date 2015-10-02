@@ -6,21 +6,13 @@ Ext.define('RunBus.view.LocalList',{
         layout:'vbox', //TODO:impotant , otherwise the list can'b show
         title: '班车', //if want add to tabPanel,must add title & iconCls & not fullscrren
         iconCls: 'time',
+        padding:0,
         items: [
             {
                 xtype: 'titlebar',title:'Local Lines',
                 items:[
-                    {xtype:'button',html:'<',ui:'action',align:'right',
-                        handler:function(){Ext.Viewport.setActiveItem(0);}
-                    },
-                    {xtype:'button',html:'>',ui:'action',align:'right',
-                        handler:function(){
-                            Ext.Viewport.setActiveItem(2);
-                            Ext.Viewport.getActiveItem(2).onResume();
-                        }
-                    },
+                    {xtype:'button',html:'创建班车',ui:'action',align:'right',iconCls:'add',},
                 ],
-
             },
             {
                 xtype: 'list',

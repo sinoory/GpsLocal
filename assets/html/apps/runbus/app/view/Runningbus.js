@@ -1,11 +1,13 @@
 Ext.define('RunBus.view.Runningbus',{
     xtype:'tpRunningbus',
     extend:'Ext.Container',
+    //extend:'Ext.NavigationView',
     config: {
         //fullscreen: true,
         layout:'vbox', //TODO:impotant , otherwise the list can'b show
         title: '主页', //if want add to tabPanel,must add title & iconCls & not fullscrren
         iconCls: 'home',
+        padding:0,
         items: [
             {
                 xtype: 'titlebar',title:'BUS',id:'idbusTitle',
@@ -21,7 +23,7 @@ Ext.define('RunBus.view.Runningbus',{
             },
             {
                 xtype:'label',flex:1,
-                html:'label',
+                html:'',
             },
             {
                 xtype: 'container',

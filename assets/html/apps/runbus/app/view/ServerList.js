@@ -6,15 +6,12 @@ Ext.define('RunBus.view.ServerList',{
         layout:'vbox', //TODO:impotant , otherwise the list can'b show
         title: '查找', //if want add to tabPanel,must add title & iconCls & not fullscrren
         iconCls: 'search',
+        padding:0,
         items: [
             {
                 xtype: 'titlebar',title:'Server Lines',
                 items:[
-                    {xtype:'button',html:'<',ui:'action',align:'right',
-                        handler:function(){Ext.Viewport.setActiveItem(1);}
-                    },
                 ],
-
             },
             {
                 xtype: 'toolbar',
